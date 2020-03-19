@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
 import Box from './Box';
 import Sphere from './Sphere';
+import Model from './Model';
 
 const METEOR_DEPTH_THRESHOLD = -10;
 
@@ -62,6 +63,11 @@ export default function Meteors({
         <>
             {
                 meteors.map((m, i) => (
+                    // <Model 
+                    //   url={'/models/comets/asteroid_OBJ/asteroid OBJ.obj'}
+                    //   position={m.position}
+                    //   key={i}
+                    // />
                     <Sphere
                         radius={m.radius}
                         position={m.position}

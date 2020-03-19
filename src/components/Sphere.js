@@ -1,19 +1,22 @@
 
-import React, { useMemo} from 'react';
+import React, { useMemo, useRef} from 'react';
 import * as THREE from 'three';
-import { useLoader} from 'react-three-fiber';
+import { useLoader, useFrame} from 'react-three-fiber';
 import { TextureLoader } from 'three/src/loaders/TextureLoader.js'
 
 export default function Sphere({
     radius = 5,
     position = [0, 0, -10],
     scale = [1, 1, 1],
-    src
+    src,
+    frameAnimation = () => {}
 }){
   const texture = useMemo(() => src && new THREE.TextureLoader().load(src), [src]);
-
+  const ref = useRef();
+  useFrame(() => frameAnimation(ref));
   return (
       <mesh
+          ref={ref}
           onClick={() => console.log('click')}
           onPointerOver={() => console.log("onPointerOver")}
           onPointerOut={() => console.log("onPointerOut")} 
