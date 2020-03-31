@@ -29,7 +29,7 @@ function App() {
           src={"/textures/starry_background.jpg"} 
           radius={500}
           />
-        {/* <Meteors /> */}
+        <Meteors />
         {/*<perspectiveCamera 
           fov={45} 
           aspect={window.innerWidth/window.innerHeight} 
