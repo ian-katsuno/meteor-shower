@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { VRButton as vrButton } from 'three/examples/jsm/webxr/VRButton.js';
+import { VRButton as vrButton } from '../lib/VRButton';
 import { useThree } from 'react-three-fiber';
 
 export default function VRButton({

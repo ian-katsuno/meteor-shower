@@ -8,6 +8,8 @@ import Controls from './components/Controls';
 import Effects from './components/Effects';
 import VRButton from './components/VRButton';
 import './styles/styles.scss'
+import OrientationControls from './components/OrientationControls';
+import VrGamePad from './components/VrGamePad';
 
 function orbitAnimation(ref){
   ref.current.position.z = ref.current.position.z + 2;
@@ -19,6 +21,7 @@ function App() {
     <>
       <h1 style={{color: 'white', position: 'fixed'}}>SPACESCAPE</h1>
       <Canvas invalidateFrameloop vr={true}>
+        <VrGamePad />
         <Effects />
         <VRButton />
         <ambientLight />
@@ -41,7 +44,8 @@ function App() {
           src={"/textures/mercury.jpg"}
           frameAnimation={orbitAnimation}
         />
-        <Controls />
+        {/* <Controls /> */}
+        <OrientationControls />
         <Plane 
           src="/textures/sand_ripples.jpg"
           position={[0, -20, 0]}

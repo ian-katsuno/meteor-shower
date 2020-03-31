@@ -3,6 +3,7 @@ import { useFrame } from 'react-three-fiber';
 import Box from './Box';
 import Sphere from './Sphere';
 import Model from './Model';
+import uuid from 'uuid/v1';
 
 const METEOR_DEPTH_THRESHOLD = -10;
 
@@ -16,6 +17,7 @@ function randomRange(width, offset = 0){
 
 function generateRandomMeteor(radius = 5){
   return {
+    uuid: uuid(),
     radius,
     position: [
       randomRange(300),
@@ -26,7 +28,7 @@ function generateRandomMeteor(radius = 5){
 }
 
 export default function Meteors({
-    N_DROPS = 10,
+    N_DROPS = 3,
     meteorRadius = 1,
 }){
     const [meteors, setMeteors] = useState([]);
@@ -43,7 +45,7 @@ export default function Meteors({
     useEffect(() => {
       const timerId = setInterval(() => {
         setMeteors([...meteorsRef.current, generateRandomMeteor()]);
-      },500);
+      },3000);
       return () => clearInterval(timerId);
     }, [])
     useFrame(() => {
@@ -71,7 +73,7 @@ export default function Meteors({
                     <Sphere
                         radius={m.radius}
                         position={m.position}
-                        key={i}
+                        key={m.uuid}
                     />
                 ))
             }
