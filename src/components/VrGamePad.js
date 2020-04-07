@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
-import { Raycaster, Vector3, ArrowHelper, Euler } from 'three';
+import { Raycaster, Color, Vector3, ArrowHelper, Euler, MeshBasicMaterial } from 'three';
 
 export default function VrGamePad({
 
@@ -20,17 +20,21 @@ export default function VrGamePad({
 
  useEffect(() => {
    if(xrSession){
-    xrSession.on('select', () => {
-      const intersects = raycaster.current.intersectObjects(scene.children);
+     console.log("registering onSelect event listener");
+    function onSelect(){
+      console.log('onSelect ran');
+      const intersects = raycaster.current.intersectObjects(scene.children, true);
       if(intersects.length > 0){
         console.log('intersected something');
       }
       for ( var i = 0; i < intersects.length; i++ ) {
         intersects[ i ].object.material.color.set( 0xff0000 );  
       }
-    })
+    }
+    xrSession.addEventListener('select', onSelect);
+    return () => xrSession.removeEventListener('select', onSelect);
    }
- }, []);
+ }, [xrSession]);
  
  useFrame((time, frame) => {
   const session = gl.xr.getSession() ;
@@ -43,10 +47,33 @@ export default function VrGamePad({
     euler.setFromQuaternion(controller.quaternion);
     direction.applyEuler(euler);
     raycaster.current.set(controller.position, direction.normalize());
-    console.log(controller);
+    let arrowColor = 0x00ffff;
+    if(session.inputSources[0].gamepad.buttons[0].pressed){
+      arrowColor = 0xffff00;
+      let intersects = raycaster.current.intersectObjects(scene.children, true);
+      if(intersects.length > 0){
+        console.log(intersects);
+          intersects = intersects.filter(i => {
+          debugger;
+          const hasParent = !!i.object.parent;
+          if(!hasParent){ return false}
+          const hasName = (i.object.parent.name !== 'inputArrow')
+          return hasName
+        })
+        intersects.sort((a, b) => a.distance - b.distance)
+        if(intersects[0] && intersects[0].object){
+          intersects[0].object.material = new MeshBasicMaterial({ color: new Color('hotpink'), transparent: true });
+          if(intersects[0].object.type === 'Mesh' && intersects[0].object.__handlers){
+            intersects[0].object.__handlers.click();
+          }
+        }
+      }
+    }   
     arrow.current && scene.remove ( arrow.current );
-    arrow.current = new ArrowHelper( direction.normalize(), position , 100, 0x00ffff);
+    arrow.current = new ArrowHelper( direction.normalize(), position , 100, arrowColor);
+    arrow.current.name = 'inputArrow'
     scene.add( arrow.current) ;
+
   }
  }, 1);
 

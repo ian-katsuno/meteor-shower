@@ -17,7 +17,7 @@ export default function Sphere({
   return (
       <mesh
           ref={ref}
-          onClick={() => console.log('click')}
+          onClick={() => console.log('sphere clicked')}
           onPointerOver={() => console.log("onPointerOver")}
           onPointerOut={() => console.log("onPointerOut")} 
           scale={scale}
