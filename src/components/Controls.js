@@ -26,27 +26,51 @@
 import React, { useRef } from 'react';
 import { extend, useThree, useFrame} from 'react-three-fiber';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
+import {FlyControls} from 'three/examples/jsm/controls/FlyControls';
+import {DragControls} from '../lib/DragControls';
+extend({ OrbitControls, FlyControls, DragControls });
 
-extend({ OrbitControls });
-
-function Controls() {
+function Controls({
+  type = 'drag'
+}) {
   const controlsRef = useRef();
   const { camera, gl } = useThree();
 
-  useFrame(() => controlsRef.current && controlsRef.current.update());
+  useFrame(() => controlsRef.current && controlsRef.current.update(1));
 
-  return (
-    <orbitControls
-      ref={controlsRef}
-      args={[camera, gl.domElement]}
-      enableRotate
-      enablePan={false}
-      maxDistance={100}
-      minDistance={5}
-      minPolarAngle={Math.PI / 6}
-      maxPolarAngle={Math.PI / 2}
-    />
-  );
+  switch(type){
+    case 'fly':
+      console.log('returning fly controls')
+      return (
+        <flyControls
+          ref={controlsRef}
+          args={[camera, gl.domElement]}
+          dragToLook={true}
+        />
+      );
+    case 'orbit': default:
+      console.log('returning orbit');
+      return (
+        <orbitControls
+          ref={controlsRef}
+          args={[camera, gl.domElement]}
+          enableRotate
+          enablePan={false}
+          maxDistance={0}
+          minDistance={1}
+          minPolarAngle={Math.PI / 6}
+          maxPolarAngle={Math.PI / 2}
+        />
+      );
+    case 'drag':
+      return (
+        <dragControls
+          ref={controlsRef}
+          args={[camera, gl.domElement]}
+        />
+      )
+  }
+
 }
 
 export default Controls;

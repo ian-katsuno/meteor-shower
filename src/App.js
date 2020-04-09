@@ -11,7 +11,6 @@ import './styles/styles.scss'
 function App() {
   return (
     <>
-      <h1 style={{color: 'white', position: 'fixed'}}>SPACESCAPE</h1>
       <Canvas invalidateFrameloop>
         <Sphere 
           src={"/textures/starry_background.jpg"} 
