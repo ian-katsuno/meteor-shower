@@ -10,9 +10,11 @@ import {
 	Math as _Math,
 	Quaternion,
 	Vector3
-} from "../../../build/three.module.js";
+} from "three";
 
-var DeviceOrientationControls = function ( object ) {
+import { DragControls } from './DragControls';
+
+var DeviceOrientationControls = function ( object, enableDrag ) {
 
 	var scope = this;
 

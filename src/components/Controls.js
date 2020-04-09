@@ -28,10 +28,16 @@ import { extend, useThree, useFrame} from 'react-three-fiber';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {FlyControls} from 'three/examples/jsm/controls/FlyControls';
 import {DragControls} from '../lib/DragControls';
-extend({ OrbitControls, FlyControls, DragControls });
+import {DeviceOrientationControls} from '../lib/DeviceOrientationControls';
+extend({ 
+  OrbitControls, 
+  FlyControls, 
+  DragControls,
+  DeviceOrientationControls
+});
 
 function Controls({
-  type = 'drag'
+  type = 'deviceOrientation'
 }) {
   const controlsRef = useRef();
   const { camera, gl } = useThree();
@@ -67,6 +73,13 @@ function Controls({
         <dragControls
           ref={controlsRef}
           args={[camera, gl.domElement]}
+        />
+      )
+    case 'deviceOrientation':
+      return (
+        <deviceOrientationControls
+          ref={controlsRef}
+          args={[camera]}
         />
       )
   }
