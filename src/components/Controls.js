@@ -23,12 +23,13 @@
 // }
 
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { extend, useThree, useFrame} from 'react-three-fiber';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {FlyControls} from 'three/examples/jsm/controls/FlyControls';
 import {DragControls} from '../lib/DragControls';
 import {DeviceOrientationControls} from '../lib/DeviceOrientationControls';
+import { stringLiteralTypeAnnotation } from '@babel/types';
 extend({ 
   OrbitControls, 
   FlyControls, 
@@ -37,7 +38,7 @@ extend({
 });
 
 function Controls({
-  type = 'deviceOrientation'
+  type = 'drag'
 }) {
   const controlsRef = useRef();
   const { camera, gl } = useThree();
@@ -83,7 +84,6 @@ function Controls({
         />
       )
   }
-
 }
 
 export default Controls;
