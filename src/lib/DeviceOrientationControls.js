@@ -12,22 +12,28 @@ import {
 	Vector3
 } from "three";
 
-import { DragControls } from './DragControls';
+import { DragModule } from './DragControls';
 
-var DeviceOrientationControls = function ( object, enableDrag ) {
+var DeviceOrientationControls = function ( object, domElement, enableDrag ) {
 
 	var scope = this;
 
 	this.object = object;
-	this.object.rotation.reorder( 'YXZ' );
+  this.object.rotation.reorder( 'YXZ' );
+
+  this.domElement = domElement;
 
 	this.enabled = true;
 
 	this.deviceOrientation = {};
 	this.screenOrientation = 0;
 
-	this.alphaOffset = 0; // radians
+  this.alphaOffset = 0; // radians
+  
 
+  if(enableDrag){
+    this.dragModule = new DragModule(domElement, object.rotation);
+  }
 	var onDeviceOrientationChangeEvent = function ( event ) {
 
 		scope.deviceOrientation = event;
@@ -105,8 +111,11 @@ var DeviceOrientationControls = function ( object, enableDrag ) {
 		window.removeEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
 		window.removeEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
 
-		scope.enabled = false;
+    scope.enabled = false;
 
+    if(this.dragModule){
+      this.dragModule.dispose();
+    }
 	};
 
 	this.update = function () {
@@ -127,19 +136,20 @@ var DeviceOrientationControls = function ( object, enableDrag ) {
 
 			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
-		}
-
-
+      // apply the drag transformation
+      if(scope.dragModule){
+        const dragQuat = new Quaternion();
+        dragQuat.setFromEuler(scope.dragModule.rotationVector);
+        scope.object.quaternion.multiply(dragQuat);
+      }
+    }
 	};
 
 	this.dispose = function () {
-
 		scope.disconnect();
-
 	};
 
 	this.connect();
-
 };
 
 export { DeviceOrientationControls };

@@ -80,7 +80,7 @@ function Controls({
       return (
         <deviceOrientationControls
           ref={controlsRef}
-          args={[camera]}
+          args={[camera, gl.domElement, true]}
         />
       )
   }

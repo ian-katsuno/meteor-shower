@@ -1,9 +1,9 @@
 import {
   Vector2,
-  Vector3,
+  Euler
 } from 'three';
 
-function ClampToRange(value, min, max){
+function clampToRange(value, min, max){
   return Math.min(Math.max(value, min), max);
 }
 
@@ -16,22 +16,20 @@ function getEventCoords(event){
   }
 }
 
-export const DragControls = function(camera, domElement){
-  this.object = camera;
-  this.object.rotation.order = "YXZ";
-  this.domElement = domElement;
-
-  //api
+export const DragModule = function(domElement, initRotation = new Vector2(0, 0)){
+   //api
   this.rotationSpeed = 0.0001;
   this.alphaMax = Math.PI/2*0.25;
-  this.alphaMin = -Math.PI/2*0.25;
+  this.alphaMin = -Math.PI/2*0.25; 
 
   // internals
+  this.domElement = domElement;
   this.mouseStart = new Vector2(0, 0);
   this.mouseCurrent = new Vector2(0, 0);
-  this.rotationVector = new Vector3();
-  this.rotationVector.copy(camera.rotation);
+  this.rotationVector = new Euler(0, 0, 0, 'YXZ');
+  this.rotationVector.setFromVector3(initRotation);
   console.log(this.rotationVector);
+  
 
 	function bind( scope, fn ) {
 		return function () {
@@ -53,8 +51,8 @@ export const DragControls = function(camera, domElement){
       // save the starting mouse coordinates
       const container = this.getContainerDimensions();
       const coords = getEventCoords(event);
-      const xStart = coords.x - container.offset[0];
-      const yStart = coords.y - container.offset[1];
+      const xStart = coords.x; //- container.offset[0];
+      const yStart = coords.y; //- container.offset[1];
       
       this.mouseStart.set(xStart, yStart);
 
@@ -72,14 +70,14 @@ export const DragControls = function(camera, domElement){
         const container = this.getContainerDimensions();
 
         const coords = getEventCoords(event);
-        const currentX = coords.x - container.offset[0];
-        const currentY = coords.y - container.offset[1];
+        const currentX = coords.x; //- container.offset[0];
+        const currentY = coords.y; //- container.offset[1];
 
         const distanceX = currentX - this.mouseStart.x;
         const distanceY = currentY - this.mouseStart.y;
 
         this.rotationVector.x += distanceY*this.rotationSpeed;
-        this.rotationVector.x = ClampToRange(this.rotationVector.x, this.alphaMin, this.alphaMax);
+        this.rotationVector.x = clampToRange(this.rotationVector.x, this.alphaMin, this.alphaMax);
         this.rotationVector.y += distanceX*this.rotationSpeed;
         this.rotationVector.z = 0;
       }
@@ -93,13 +91,7 @@ export const DragControls = function(camera, domElement){
     this.mouseDown = false;
   }
 
-  this.update = function(){
-     this.object.rotation.y = this.rotationVector.y;
-     this.object.rotation.x = this.rotationVector.x;
-  }
-
-  this.dispose = function () {
-
+  this.dispose = function(){
     this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
     this.domElement.removeEventListener( 'mousedown', _mousedown, false );
     this.domElement.removeEventListener( 'mousemove', _mousemove, false );
@@ -108,7 +100,7 @@ export const DragControls = function(camera, domElement){
     this.domElement.removeEventListener( 'touchstart', _mousedown, false);
     this.domElement.removeEventListener( 'touchmove', _mousemove, false);
     this.domElement.removeEventListener( 'touchend', _mouseup, false);
-  };
+  }
 
  	this.getContainerDimensions = function () {
 		if ( this.domElement != document ) {
@@ -122,7 +114,7 @@ export const DragControls = function(camera, domElement){
 				offset: [ 0, 0 ]
 			};
 		}
-  }; 
+  };
 
 	var _mousemove = bind( this, this.mousemove );
 	var _mousedown = bind( this, this.mousedown );
@@ -137,4 +129,25 @@ export const DragControls = function(camera, domElement){
   this.domElement.addEventListener( 'touchstart', _mousedown, false);
   this.domElement.addEventListener( 'touchmove', _mousemove, false);
   this.domElement.addEventListener( 'touchend', _mouseup, false);
+}
+
+export const DragControls = function(camera, domElement){
+
+  this.object = camera;
+  this.object.rotation.order = "YXZ";
+  this.domElement = domElement;
+  this.dragModule = new DragModule(domElement, camera.rotation);
+
+  this.update = function(){
+     this.object.rotation.y = this.dragModule.rotationVector.y;
+     this.object.rotation.x = this.dragModule.rotationVector.x;
+  }
+
+  this.dispose = function () {
+    this.dragModule.dispose();
+  };
+
+ 
+
+
 }
