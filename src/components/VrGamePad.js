@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Raycaster, Color, Vector3, ArrowHelper, MeshBasicMaterial } from 'three';
+import * as THREE from 'three';
 
 function getControllerPose(controller){
   const position = controller.position;
@@ -26,13 +27,35 @@ function renderControllerRay(scene, arrowRef, position, direction, color = 0xfff
     scene.add(arrowRef.current);
 }
 
+/*
+  point is a Vector3 from intersectObjects
+  color is a hex coloor
+*/
+function drawSphericalReticule(scene, point, distance, sphere, color=0xff00ff){
+  const r = 0.1;
+  if(!sphere){
+    var geometry = new THREE.SphereGeometry( r, 32, 32 );
+    var material = new THREE.MeshBasicMaterial( {color} );
+    sphere = new THREE.Mesh( geometry, material );
+    sphere.name = 'reticule-sphere';
+    sphere.position.copy(point);
+    scene.add(sphere);
+  }
+
+  sphere.position.copy(point);
+  const scale = r * distance * 0.5;
+  sphere.scale.copy(new Vector3(scale, scale, scale));
+
+  return sphere;
+}
+
 // this function takes the raycaster, the scene, and the visibleArrowName
 //  it returns the ONE CLOSEST item that the raycaster intersected with
 //    that is NOT the visible arrow.
 //  This function ONLY gets the intersected thing it DOES NOT handle what to do
 // on a sucessful click
 //  if nothing of interest is intersected then null is returned
-function getClosestIntersectedObject(scene, raycaster, visibleArrowName){
+function getClosestIntersected(scene, raycaster, meshesToIgnore = []){
   let intersects = raycaster.intersectObjects(scene.children, true);
 
   if(intersects.length === 0){
@@ -40,19 +63,15 @@ function getClosestIntersectedObject(scene, raycaster, visibleArrowName){
   }
 
   intersects = intersects.filter(i => {
-
-    if(!i.object.parent){ 
-      return false
-    }
-
-    // don't keep the object if it's our visible arrow
-    return (i.object.parent.name !== visibleArrowName)
+    return !meshesToIgnore.some(obj => {
+      return obj && (obj === i.object)
+    });
   });
 
   // sort by distance, ascending (smallest distance first)
   intersects.sort((a, b) => a.distance - b.distance)
 
-  return intersects[0] ? intersects[0].object : null;
+  return intersects[0] ? intersects[0] : null;
 }
 
 function handleClickedObject(object){
@@ -65,10 +84,11 @@ function handleClickedObject(object){
 export default function VrGamePad({
 
 }){
- const { gl, scene } = useThree();
- const raycaster = useRef();
- const arrow = useRef();
- const xrSession = gl.xr.getSession();
+ const { gl, scene } = useThree(),
+  raycaster = useRef(),
+  arrow = useRef(),
+  reticule = useRef(),
+  xrSession = gl.xr.getSession();
  
  useEffect(() => {
   // calling getController with a new id creates a controller at that ID
@@ -116,12 +136,14 @@ export default function VrGamePad({
     renderControllerRay(scene, arrow, position, direction);
     raycaster.current.set(position, direction.normalize());
 
-    // check handle button presses
-    if(session.inputSources[0].gamepad.buttons[0].pressed){
-      const intersected = getClosestIntersectedObject(scene, raycaster.current, arrow.current.name);
-     
-      if(intersected){
-        handleClickedObject(intersected);
+    const intersected = getClosestIntersected(scene, raycaster.current, [arrow.current && arrow.current.mesh, reticule.current]);
+    if(intersected){
+      if(intersected.point){
+        reticule.current = drawSphericalReticule(scene, intersected.point, intersected.distance, reticule.current);
+      }
+      // check handle button presses
+      if(session.inputSources[0].gamepad.buttons[0].pressed){
+        handleClickedObject(intersected.object);
       }
     }   
   }
