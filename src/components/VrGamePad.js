@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
 import { Raycaster } from 'three';
-import { createButton } from '../lib/renderVRButton';
+import { createButton } from '../lib/renderVRButtonon';
 
 import { 
   getControllerPose,
