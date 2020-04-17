@@ -23,7 +23,7 @@ function App() {
       <Canvas invalidateFrameloop vr={true}>
         <VrGamePad />
         <Effects />
-        <VRButton />
+        {/* <VRButton /> */}
         <ambientLight />
         <Sphere 
           src={"/textures/starry_background.jpg"} 
