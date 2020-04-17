@@ -1,7 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { useFrame, useThree } from 'react-three-fiber';
-import { Raycaster, Color, Vector3, ArrowHelper, MeshBasicMaterial } from 'three';
+import { Raycaster, Color, Vector3, MeshBasicMaterial } from 'three';
 import * as THREE from 'three';
+
+function moveInDirection(origin, direction, distance){
+  return new Vector3(
+    origin.x + distance * direction.x,
+    origin.y + distance * direction.y,
+    origin.z + distance * direction.z
+  );
+}
 
 function getControllerPose(controller){
   const position = controller.position;
@@ -12,26 +20,41 @@ function getControllerPose(controller){
   // apply the coontroller's rotation to the direction vector
   direction.applyQuaternion(controller.quaternion);
 
-  return [ position, direction ];
+  return [ position, direction.normalize() ];
 }
 
-function renderControllerRay(scene, arrowRef, position, direction, color = 0xffff00){
-    const length = 1000;
 
-    if(arrowRef.current){
-      scene.remove(arrowRef.current);
-    }
 
-    arrowRef.current = new ArrowHelper( direction.normalize(), position, length, color);
-    arrowRef.current.name = 'inputArrow';
-    scene.add(arrowRef.current);
+function renderControllerRay(scene, lineRef, position, direction, distance, color = 0xffff00){
+
+  if(lineRef.current){
+    scene.remove(lineRef.current);
+  }
+
+  var material = new THREE.LineBasicMaterial({ color });
+
+  const normd = direction.normalize();
+
+  const dest = new Vector3(
+    position.x + distance * normd.x,
+    position.y + distance * normd.y,
+    position.z + distance * normd.z
+  )
+  
+  var points = [position, dest];
+  
+  var geometry = new THREE.BufferGeometry().setFromPoints( points );
+  
+  lineRef.current = new THREE.Line( geometry, material );
+
+  scene.add( lineRef.current );  
 }
 
 /*
   point is a Vector3 from intersectObjects
   color is a hex coloor
 */
-function drawSphericalReticule(scene, point, distance, sphere, color=0xff00ff){
+function drawSphericalReticule(scene, point, sphere, distance, color=0xff00ff){
   const r = 0.1;
   if(!sphere){
     var geometry = new THREE.SphereGeometry( r, 32, 32 );
@@ -133,14 +156,19 @@ export default function VrGamePad({
     const [ position, direction ] = getControllerPose(gl.xr.getController(0));
 
     // render the controller ray    
-    renderControllerRay(scene, arrow, position, direction);
-    raycaster.current.set(position, direction.normalize());
+    raycaster.current.set(position, direction);
 
-    const intersected = getClosestIntersected(scene, raycaster.current, [arrow.current && arrow.current.mesh, reticule.current]);
+    const intersected = getClosestIntersected(scene, raycaster.current, [arrow.current, reticule.current]);
+
+    let distance = intersected ? intersected.distance : 200;
+    let rayDest = intersected ? intersected.point : moveInDirection(position, direction, distance);
+
+    reticule.current = drawSphericalReticule(scene, rayDest, reticule.current, distance);
+    renderControllerRay(scene, arrow, position, direction, distance, 0xff11ff);
     if(intersected){
       if(intersected.point){
-        reticule.current = drawSphericalReticule(scene, intersected.point, intersected.distance, reticule.current);
       }
+    
       // check handle button presses
       if(session.inputSources[0].gamepad.buttons[0].pressed){
         handleClickedObject(intersected.object);
