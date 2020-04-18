@@ -6,7 +6,7 @@ extend({ DeviceOrientationControls });
 
 function OrientationControls() {
   const controlsRef = useRef();
-  const { camera, gl } = useThree();
+  const { camera } = useThree();
 
   useFrame(() => controlsRef.current && controlsRef.current.update());
 

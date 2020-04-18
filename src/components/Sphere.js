@@ -1,8 +1,8 @@
 
 import React, { useMemo, useRef} from 'react';
 import * as THREE from 'three';
-import { useLoader, useFrame} from 'react-three-fiber';
-import { TextureLoader } from 'three/src/loaders/TextureLoader.js'
+import { /*useLoader,*/ useFrame} from 'react-three-fiber';
+//import { TextureLoader } from 'three/src/loaders/TextureLoader.js'
 
 export default function Sphere({
     radius = 5,

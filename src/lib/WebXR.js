@@ -1,6 +1,34 @@
 import * as THREE from 'three';
 import { Vector3, MeshBasicMaterial, Color } from 'three';
 
+function onSessionStarted( session, renderer ) {
+
+  for(let source of session.inputSources){
+    console.dir(source);
+  }
+
+  session.addEventListener( 'end', e => onSessionEnded(e, session) );
+  
+  session.addEventListener('selectstart', (e) => {
+    console.log('selectStart')
+  });
+
+  session.addEventListener('select', e => {
+    console.log('select');
+  });
+
+  session.addEventListener('selectend', e => {
+    console.log('selectEnd');
+  });
+
+  renderer.xr.setSession( session );
+}
+
+function onSessionEnded(e, session) {
+  session.removeEventListener( 'end', onSessionEnded );
+  //button.textContent = 'ENTER VR';
+}
+
 function renderControllerRay(scene, lineRef, position, direction, distance, color = 0xffff00){
 
   if(lineRef.current){
@@ -100,6 +128,24 @@ function handleClickedObject(object){
   }
 }
 
+function startXR(renderer){
+  const currentSession = renderer.xr.getSession();
+  if ( currentSession === null ) {
+    // WebXR's requestReferenceSpace only works if the corresponding feature
+    // was requested at session creation time. For simplicity, just ask for
+    // the interesting ones as optional features, but be aware that the
+    // requestReferenceSpace call will fail if it turns out to be unavailable.
+    // ('local' is always available for immersive sessions and doesn't need to
+    // be requested separately.)
+
+    var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
+    navigator.xr.requestSession( 'immersive-vr', sessionInit ).then(session => onSessionStarted(session, renderer));
+  } 
+  else {
+    currentSession.end();
+  }
+}
+
 export {
   getControllerPose,
   moveInDirection,
@@ -107,4 +153,6 @@ export {
   drawSphericalReticule,
   getClosestIntersected,
   handleClickedObject,
+
+  startXR,
 }

@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Canvas } from 'react-three-fiber';
 
 import Meteors from './components/Meteors';
 import Plane from './components/Plane';
 import Sphere from './components/Sphere';
-import Controls from './components/Controls';
+//import Controls from './components/Controls';
 import Effects from './components/Effects';
-import VRButton from './components/VRButton';
+//import VRButton from './components/VRButton';
 import './styles/styles.scss'
 import OrientationControls from './components/OrientationControls';
 import VrGamePad from './components/VrGamePad';

@@ -65,7 +65,10 @@ function createButton(xrSupported, inlineSupported, onClick){
         element.style.opacity = '0.5';
       };
 
-      element.onclick = onClick;
+      element.onclick = (e) => {
+        element.textContent = "EXIT VR";
+        onClick(e);
+      }
     } 
   }
   else{

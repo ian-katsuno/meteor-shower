@@ -1,15 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useFrame } from 'react-three-fiber';
-import Box from './Box';
 import Sphere from './Sphere';
-import Model from './Model';
+//import Model from './Model';
 import uuid from 'uuid/v1';
 
 const METEOR_DEPTH_THRESHOLD = -10;
 
-function plusMinus(width){
-  return (Math.random() - 0.5)* width;
-}
+// function plusMinus(width){
+//   return (Math.random() - 0.5)* width;
+// }
 
 function randomRange(width, offset = 0){
   return (Math.random()-0.5) * width + offset;
@@ -33,10 +32,11 @@ export default function Meteors({
 }){
     const [meteors, setMeteors] = useState([]);
     const meteorsRef = useRef([]); 
+
     useEffect(() => {
       const meteors = new Array(N_DROPS).fill(0).map(() => generateRandomMeteor());
       setMeteors(meteors);
-    },[]);
+    },[N_DROPS]);
 
     useEffect(() => {
       meteorsRef.current = meteors;
