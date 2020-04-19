@@ -1,34 +1,6 @@
 import * as THREE from 'three';
 import { Vector3, MeshBasicMaterial, Color } from 'three';
 
-function onSessionStarted( session, renderer ) {
-
-  for(let source of session.inputSources){
-    console.dir(source);
-  }
-
-  session.addEventListener( 'end', e => onSessionEnded(e, session) );
-  
-  session.addEventListener('selectstart', (e) => {
-    console.log('selectStart')
-  });
-
-  session.addEventListener('select', e => {
-    console.log('select');
-  });
-
-  session.addEventListener('selectend', e => {
-    console.log('selectEnd');
-  });
-
-  renderer.xr.setSession( session );
-}
-
-function onSessionEnded(e, session) {
-  session.removeEventListener( 'end', onSessionEnded );
-  //button.textContent = 'ENTER VR';
-}
-
 function renderControllerRay(scene, lineRef, position, direction, distance, color = 0xffff00){
 
   if(lineRef.current){
@@ -128,7 +100,7 @@ function handleClickedObject(object){
   }
 }
 
-function startXR(renderer){
+function startXR(renderer, onSessionStarted){
   const currentSession = renderer.xr.getSession();
   if ( currentSession === null ) {
     // WebXR's requestReferenceSpace only works if the corresponding feature

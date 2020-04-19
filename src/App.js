@@ -9,7 +9,7 @@ import Effects from './components/Effects';
 //import VRButton from './components/VRButton';
 import './styles/styles.scss'
 import OrientationControls from './components/OrientationControls';
-import VrGamePad from './components/VrGamePad';
+import WebXR from './components/WebXR';
 
 function orbitAnimation(ref){
   ref.current.position.z = ref.current.position.z + 2;
@@ -21,7 +21,7 @@ function App() {
     <>
       <h1 style={{color: 'white', position: 'fixed'}}>SPACESCAPE</h1>
       <Canvas invalidateFrameloop vr={true}>
-        <VrGamePad />
+        <WebXR />
         <Effects />
         {/* <VRButton /> */}
         <ambientLight />
