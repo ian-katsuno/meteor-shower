@@ -8,7 +8,9 @@ import { TextureLoader } from 'three/src/loaders/TextureLoader.js'
 export default function Plane({
     position = [0, 0, -100],
     rotation = [0,0,0],
-    src
+    src,
+    onPointerOver = () => {},
+    onPointerOut = () => {},
 }){
 
   const texture = useMemo(() => new THREE.TextureLoader().load(src), [src])
@@ -23,8 +25,8 @@ export default function Plane({
   return (
     <mesh
       onClick={() => console.log('click')}
-      onPointerOver={() => console.log("onPointerOver")}
-      onPointerOut={() => console.log("onPointerOut")} 
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut} 
       scale={[1, 1, 1]}
       position={position}
       ref={ref}

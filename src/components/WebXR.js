@@ -10,7 +10,6 @@ import {
   renderControllerRay, 
   drawSphericalReticule,
   getClosestIntersected,
-  handleClickedObject,
 } from '../lib/WebXRLib';
 
 const DEFAULT_RAY_DISTANCE = 200;
@@ -28,6 +27,7 @@ export default function WebXR({
   onPointerOut, 
   */
 
+  onSessionStart,
   onSessionEnd,
 
   rayColor = 0xff11ff,
@@ -35,7 +35,7 @@ export default function WebXR({
 
 }){
   const [ session, setSession ] = useState();
-  const hovered = useRef();
+  //const hovered = useRef();
 
   const { gl: renderer, scene } = useThree(),
     raycaster = useRef(),
@@ -46,7 +46,7 @@ export default function WebXR({
     if( options && options.referenceSpaceType ){
 			renderer.xr.setReferenceSpaceType( options.referenceSpaceType );
     }
-  }, [options]);
+  }, [options, renderer]);
 
 
   useEffect(() => {
@@ -55,16 +55,13 @@ export default function WebXR({
   }, []);
 
 
-  const onSessionStarted = useCallback(( session, renderer ) => {
+  const _onSessionStart = useCallback(( session, renderer ) => {
 
     setSession(session);
-
-    for(let source of session.inputSources){
-      console.dir(source);
-    }
-    
     renderer.xr.setSession( session );
-  }, [renderer, ]);
+
+    onSessionStart(session);
+  }, [onSessionStart]);
 
 
   useEffect(() => {
@@ -72,25 +69,36 @@ export default function WebXR({
       return;
     }
 
+    console.debug('onSelect callbacks registered')
+
     function _onSelectStart(e){
-      console.log('selectStart')
+      console.log('_selectStart')
       onSelectStart(e)
     }
 
     function _onSelect(e){
-
+      console.log('_onSelect')
       const intersected = getClosestIntersected(scene, raycaster.current, [arrow.current, reticule.current]);
-      console.log('select');
+
+      if(intersected && intersected.object.type === 'Mesh' && intersected.object.__handlers){
+        intersected.object.__handlers.click();
+      }
+
       onSelect(e, intersected, session);
     }
 
     function _onSelectEnd(e){
-      console.log('selectEnd');
+      console.log('_selectEnd');
       onSelectEnd(e);
     }
 
+    session.addEventListener('selectstart', _onSelectStart);
+    session.addEventListener('select', _onSelect);
+    session.addEventListener('selectend', _onSelectEnd);
+
     return () => {
       if(session){
+        console.debug('onSelect callbacks cleaned up');
         session.removeEventListener('selectstart', _onSelectStart);
         session.removeEventListener('select', _onSelect);
         session.removeEventListener('selectend', _onSelectEnd);
@@ -105,7 +113,10 @@ export default function WebXR({
 
     function _onSessionEnd(e){
       console.log('WEBXR session ended');
-      session.removeEventListener('end', _onSessionEnd)
+      if(session){
+        session.removeEventListener('end', _onSessionEnd)
+        setSession(null);
+      }
       onSessionEnd(e);
     }
     session.addEventListener('end', _onSessionEnd);
@@ -123,14 +134,14 @@ export default function WebXR({
     if( 'xr' in navigator){
       navigator.xr.isSessionSupported( 'inline' )
         .then( function ( isSupported ) {
-          button = createButton(true, isSupported, () => startXR(renderer, onSessionStarted));
+          button = createButton(true, isSupported, () => startXR(renderer, _onSessionStart));
       });
     }
     else{
       button = createButton(false, false)
     }
     return () => button.remove();
-  },[renderer, onSessionStarted]);
+  },[renderer, _onSessionStart]);
  
  useFrame((time) => {
 
@@ -147,9 +158,32 @@ export default function WebXR({
     // determine
     const intersected = getClosestIntersected(scene, raycaster.current, [arrow.current, reticule.current]);
 
+    // TODO: add pointerOver/pointerOut logic here
+    /*
+      - if we are intersecting a new thing from last time:
+          - call the pointerOut for the item we are no longer on
+          - call the user onPointerOut callback passed in here as a prop
+      - update the hovered ref to point to our new thing we are pointing at
+      - call the pointerOver callback if there is one for the currently intersected item
+    if(intersected && intersected.object.__handlers){
+      console.log(intersected.object.__handlers);
+      if(intersected.object.__handlers.pointerOver){
+        intersected.object.__handlers.pointerOver();
+      }
+    }
+    */
+
+
     let distance = intersected ? intersected.distance : DEFAULT_RAY_DISTANCE;
     let rayDest = intersected ? intersected.point : moveInDirection(position, direction, distance);
-    let buttonPressed = session.inputSources[0].gamepad.buttons[0].pressed;
+    let buttonPressed = false;
+    try{
+      buttonPressed = session.inputSources[0].gamepad.buttons[0].pressed;
+    }
+    catch(err){
+      console.warn('error accessint button');
+      console.warn(err);
+    }
     
     reticule.current = drawSphericalReticule(
       scene, 
@@ -166,10 +200,6 @@ export default function WebXR({
       distance, 
       buttonPressed ? activeRayColor : rayColor
     );
-
-    if(buttonPressed && intersected){
-      handleClickedObject(intersected.object);
-    }
   }
  }, 1);
 
