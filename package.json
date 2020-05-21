@@ -10,8 +10,10 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
-    "react-three-fiber": "^3.0.17",
+    "react-spring": "^8.0.27",
+    "react-three-fiber": "^4.1.2",
     "three": "^0.112.1",
+    "three-mesh-ui": "^1.2.2",
     "uuid": "^7.0.2",
     "webxr-polyfill": "^2.0.1"
   },
@@ -36,5 +38,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gltfjsx": "^1.0.11"
   }
 }

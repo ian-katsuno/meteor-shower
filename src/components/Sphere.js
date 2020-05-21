@@ -28,6 +28,7 @@ export default function Sphere({
         {
           src ? (          
             <meshBasicMaterial attach="material" transparent side={THREE.DoubleSide}>
+              <primitive attach="normalMap" object={texture} />
               <primitive attach="map" object={texture} />
             </meshBasicMaterial>
             ) :

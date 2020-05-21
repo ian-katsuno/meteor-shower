@@ -26,8 +26,9 @@ export default function Plane({
           ref={ref}
       >
         <planeBufferGeometry attach="geometry" args={[1000, 1000]} />
-        <meshBasicMaterial attach="material" transparent side={THREE.DoubleSide}>
+        <meshBasicMaterial attach="material" side={THREE.DoubleSide}>
           <primitive attach="map" object={texture} />
+          <primitive attach="normalMap" object={texture} />
         </meshBasicMaterial>
       </mesh>
   )
