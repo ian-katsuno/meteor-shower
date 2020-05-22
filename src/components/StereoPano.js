@@ -1,8 +1,10 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
+
 import { 
   useThree,
   useLoader,
 } from 'react-three-fiber';
+
 import {
   SphereBufferGeometry,
   SphereGeometry,
@@ -13,6 +15,15 @@ import {
   Mesh,
   MeshPhysicalMaterial,
 } from 'three';
+
+const OVERUNDER_TEXTURES = [
+  '/textures/overunder/chess-pano-4k-stereo.jpg',
+  '/textures/overunder/ACM_3603D_4096x4096_01.jpg', //galazy spaceship 1
+  '/textures/overunder/ACM_3603D_4096x4096_02.jpg', //bacteria 
+  '/textures/overunder/ACM_3603D_4096x4096_03.jpg', // galaxy spaceship 2
+  '/textures/overunder/ACM_3603D_4096x4096_04.jpg', // trippy arms and legs
+  '/textures/starry_background.jpg'
+]
 
 function mapSphereGeometryToOverUnder(sphereGeometry, half="top"){
   const uvs = sphereGeometry.faceVertexUvs[0];
@@ -27,17 +38,20 @@ function mapSphereGeometryToOverUnder(sphereGeometry, half="top"){
 }
 
 export default function StereoPano({
-
+  src = OVERUNDER_TEXTURES[4]
 }){
-  const texture = useLoader(TextureLoader, 'textures/chess-pano-4k-stereo.jpg');
+  //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
+
+  const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
   const [meshL, setMeshL] = useState();
   const [meshR, setMeshR] = useState();
   
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
 
   useEffect(() => {
     // enabling layer 1 so that the camera can see one pano sphere before you 'Enter VR'
     camera.layers.enable(1);
+    gl.setClearColor(0x000000);
   }, [])
 
   useEffect(() => {
@@ -57,7 +71,6 @@ export default function StereoPano({
     const meshL = new Mesh(geometryL, materialL);
     const meshR = new Mesh(geometryR, materialR);
 
-    // .set()
     meshL.layers.set(1);
     meshR.layers.set(2);
 

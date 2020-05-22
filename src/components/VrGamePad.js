@@ -165,7 +165,7 @@ export default function VrGamePad({
 
     reticule.current = drawSphericalReticule(scene, rayDest, reticule.current, distance);
     renderControllerRay(scene, arrow, position, direction, distance, 0xff11ff);
-    if(intersected){
+    if(intersected && session.inputSources && session.inputSources[0]){
       if(intersected.point){
       }
     

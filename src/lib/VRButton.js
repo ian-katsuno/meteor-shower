@@ -95,11 +95,29 @@ var VRButton = {
 					// the interesting ones as optional features, but be aware that the
 					// requestReferenceSpace call will fail if it turns out to be unavailable.
 					// ('local' is always available for immersive sessions and doesn't need to
-					// be requested separately.)
+          // be requested separately.)
+          if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            // iOS 13+
+            DeviceOrientationEvent.requestPermission()
+            .then(response => {
+              if (response == 'granted') {
+                const result = window.confirm('enter vr?');
+                if(result){
+                  var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
+                  navigator.xr.requestSession( 'immersive-vr', sessionInit ).then( onSessionStarted );
 
-					var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
-					navigator.xr.requestSession( 'immersive-vr', sessionInit ).then( onSessionStarted );
-
+                }
+              }
+              else{
+                alert("Permission Denied: immersive phone VR requires permission for DeviceOrientation events");
+              }
+            })
+            .catch(console.error)
+          } else {
+            // non iOS 13+
+            var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
+            navigator.xr.requestSession( 'immersive-vr', sessionInit ).then( onSessionStarted );
+          }
 				} else {
 
 					currentSession.end();

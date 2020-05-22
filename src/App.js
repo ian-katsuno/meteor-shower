@@ -1,5 +1,5 @@
 import React, {useEffect } from 'react';
-import { Canvas } from 'react-three-fiber';
+import { Canvas, Dom } from 'react-three-fiber';
 
 import Meteors from './components/Meteors';
 import Plane from './components/Plane';
@@ -35,8 +35,7 @@ function App() {
     <>
       <h1 style={{color: 'white', position: 'fixed'}}>SPACESCAPE</h1>
       <Canvas invalidateFrameloop vr={true}>
-        <React.Suspense fallback={null}>
-          <StereoPano />
+        <React.Suspense fallback={<Dom></Dom>}>
           {/* <Triangle 
             position={new Vector3(0, 0, -5)}
             scale={new Vector3(4, 4, 4)}
@@ -71,12 +70,18 @@ function App() {
             position={[0, 0, 2]}
           /> */}
         </React.Suspense>
-        {/* <VrGamePad /> */}
+
+        <StereoPano />
+        <VrGamePad />
         <Effects />
         <VRButton />
         <ambientLight />
         {/* <Sphere 
-          src={"/textures/starry_background.jpg"} 
+          src={'/textures/overunder/chess-pano-4k-stereo.jpg'}
+          radius={500}
+          /> */}
+        {/* <Sphere 
+          src={'/textures/starry_background.jpg'}
           radius={500}
           /> */}
         {/* <Meteors /> */}
