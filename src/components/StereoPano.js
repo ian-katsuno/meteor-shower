@@ -118,15 +118,15 @@ const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
     return null;
   }
   return (
-    <group>
-      <mesh layers={1}>
+    <a.group>
+      <a.mesh layers={1}>
         <a.meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={opacityValue} />
         <primitive attach="geometry" object={geometryL} />
-      </mesh>
-      <mesh layers={2}>
+      </a.mesh>
+      <a.mesh layers={2}>
         <a.meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={opacityValue} />
         <primitive attach="geometry" object={geometryR} />
-      </mesh>
-    </group>
+      </a.mesh>
+    </a.group>
   );
 }
