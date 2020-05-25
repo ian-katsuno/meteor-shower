@@ -13,7 +13,7 @@ import VrGamePad from './components/VrGamePad';
 import Triangle from './components/Triangle';
 import Avocado from './components/Avocado';
 import Chair from './components/Chair';
-import FlightHelmet from './components/FlightHelmet';
+// import FlightHelmet from './components/FlightHelmet';
 import Menu from './components/Menu';
 import AnimatedTriangle from './components/AnimatedTriangle';
 import Fox from './components/Fox'
@@ -73,6 +73,9 @@ function App() {
 
           <ViewMaster />
         </React.Suspense>
+
+
+        {/* <StereoPano /> */}
         <VrGamePad />
         <Effects />
         <VRButton />

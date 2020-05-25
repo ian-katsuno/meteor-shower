@@ -1,7 +1,6 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
-import { useSpring } from '@react-spring/core';
-import { a } from '@react-spring/three';
-//import { animated } from 'react-spring-three';
+// import { useSpring } from '@react-spring/core';
+// import { a } from '@react-spring/three';
 
 import { 
   useThree,
@@ -22,6 +21,15 @@ import {
 } from 'three';
 
 
+const OVERUNDER_TEXTURES = [
+  '/textures/overunder/chess-pano-4k-stereo.jpg',
+  '/textures/overunder/ACM_3603D_4096x4096_01.jpg', //galazy spaceship 1
+  '/textures/overunder/ACM_3603D_4096x4096_02.jpg', //bacteria 
+  '/textures/overunder/ACM_3603D_4096x4096_03.jpg', // galaxy spaceship 2
+  '/textures/overunder/ACM_3603D_4096x4096_04.jpg', // trippy arms and legs
+  '/textures/starry_background.jpg'
+]
+
 function mapSphereGeometryToOverUnder(sphereGeometry, half="top"){
   const uvs = sphereGeometry.faceVertexUvs[0];
   for (var i = 0; i < uvs.length; i++) {
@@ -40,11 +48,13 @@ export default function StereoPano({
 }){
   //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
 
-  const { spring } = useSpring({
-    spring: opacity,
-    config: { mass: 1, tension: 170, friction: 90, precision: 0.0001 }
-  })
-  const opacityValue = spring.to([0, 1], [0, 1]);
+  // const { spring } = useSpring({
+  //   spring: opacity,
+  //   config: { mass: 1, tension: 170, friction: 90, precision: 0.0001 }
+  // })
+
+  // const opacityValue = spring.to([0, 1], [0, 1]);
+
   const [geometryL, geometryR] = useMemo(() => {
     const geometryL = new SphereGeometry(500, 60, 40);
     const geometryR = new SphereGeometry(500, 60, 40);
@@ -58,11 +68,11 @@ const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
   const [meshL, setMeshL] = useState();
   const [meshR, setMeshR] = useState();
   
-  const [props, set, stop] = useSpring(() => ({opacity: 1}))
+  // const [props, set, stop] = useSpring(() => ({opacity: 1}))
 
-  useEffect(() => {
-    set({opacity});
-  }, [opacity]);
+  // useEffect(() => {
+  //   set({opacity});
+  // }, [opacity]);
 
   const { camera, gl, useFrame } = useThree();
 
@@ -109,15 +119,14 @@ const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
   }
   return (
     <group>
-      <a.mesh layers={1}>
-        <a.meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={opacityValue} />
+      <mesh layers={1}>
+        <meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={1} />
         <primitive attach="geometry" object={geometryL} />
-      </a.mesh>
-      <a.mesh layers={2}>
-        <a.meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={opacityValue} />
+      </mesh>
+      <mesh layers={2}>
+        <meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={1} />
         <primitive attach="geometry" object={geometryR} />
-      </a.mesh>
-
+      </mesh>
     </group>
   );
 }
