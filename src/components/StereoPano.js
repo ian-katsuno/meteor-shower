@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
-// import { useSpring } from '@react-spring/core';
-// import { a } from '@react-spring/three';
+//import { useSpring } from '@react-spring/core';
+import { a, useSpring } from '@react-spring/three';
 
 import { 
   useThree,
@@ -48,12 +48,12 @@ export default function StereoPano({
 }){
   //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
 
-  // const { spring } = useSpring({
-  //   spring: opacity,
-  //   config: { mass: 1, tension: 170, friction: 90, precision: 0.0001 }
-  // })
+  const { spring } = useSpring({
+    spring: opacity,
+    config: { mass: 1, tension: 170, friction: 90, precision: 0.0001 }
+  })
 
-  // const opacityValue = spring.to([0, 1], [0, 1]);
+  const opacityValue = spring.to([0, 1], [0, 1]);
 
   const [geometryL, geometryR] = useMemo(() => {
     const geometryL = new SphereGeometry(500, 60, 40);
@@ -120,11 +120,11 @@ const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
   return (
     <group>
       <mesh layers={1}>
-        <meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={1} />
+        <a.meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={opacityValue} />
         <primitive attach="geometry" object={geometryL} />
       </mesh>
       <mesh layers={2}>
-        <meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={1} />
+        <a.meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={opacityValue} />
         <primitive attach="geometry" object={geometryR} />
       </mesh>
     </group>

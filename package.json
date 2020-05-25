@@ -3,24 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@react-spring/core": "^9.0.0-rc.3",
-    "@react-spring/three": "^9.0.0-rc.3",
+    "@react-spring/three": "^9.0.0-rc.1",
+    "@react-spring/web": "^9.0.0-rc.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
     "node-sass": "^4.13.0",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0",
-    "react-three-fiber": "^4.1.2",
-    "three": "^0.112.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
+    "react-three-fiber": "^4.2.7",
+    "three": "^0.116.1",
     "three-mesh-ui": "^1.2.2",
     "uuid": "^7.0.2",
     "webxr-polyfill": "^2.0.1"
   },
   "scripts": {
-    "start": "HTTPS=true SSL_CRT_FILE=cert.pem SSL_KEY_FILE=key.pem react-scripts start",
-    "startHTTP": "react-scripts start",
+    "startHTTPS": "HTTPS=true SSL_CRT_FILE=cert.pem SSL_KEY_FILE=key.pem react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -41,6 +41,7 @@
     ]
   },
   "devDependencies": {
-    "gltfjsx": "^1.0.11"
+    "gltfjsx": "^1.0.11",
+    "typescript": "^3.9.3"
   }
 }
