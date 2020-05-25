@@ -20,6 +20,7 @@ import Fox from './components/Fox'
 import RockyPlanet from './components/RockyPlanet';
 import RingPlanet from './components/RingPlanet';
 import StereoPano from './components/StereoPano';
+import ViewMaster from './components/ViewMaster';
 
 import {
   Vector3
@@ -70,8 +71,7 @@ function App() {
             position={[0, 0, 2]}
           /> */}
         </React.Suspense>
-
-        <StereoPano />
+        <ViewMaster />
         <VrGamePad />
         <Effects />
         <VRButton />
@@ -99,7 +99,7 @@ function App() {
           src={"/textures/mercury.jpg"}
           frameAnimation={() => {}}
         /> */}
-        {/* <Controls /> */}
+        <Controls />
         {/* <OrientationControls /> */}
         {/* <Plane 
           src="/textures/sand_ripples.jpg"

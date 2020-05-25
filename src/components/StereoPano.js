@@ -16,14 +16,7 @@ import {
   MeshPhysicalMaterial,
 } from 'three';
 
-const OVERUNDER_TEXTURES = [
-  '/textures/overunder/chess-pano-4k-stereo.jpg',
-  '/textures/overunder/ACM_3603D_4096x4096_01.jpg', //galazy spaceship 1
-  '/textures/overunder/ACM_3603D_4096x4096_02.jpg', //bacteria 
-  '/textures/overunder/ACM_3603D_4096x4096_03.jpg', // galaxy spaceship 2
-  '/textures/overunder/ACM_3603D_4096x4096_04.jpg', // trippy arms and legs
-  '/textures/starry_background.jpg'
-]
+
 
 function mapSphereGeometryToOverUnder(sphereGeometry, half="top"){
   const uvs = sphereGeometry.faceVertexUvs[0];
@@ -38,7 +31,7 @@ function mapSphereGeometryToOverUnder(sphereGeometry, half="top"){
 }
 
 export default function StereoPano({
-  src = OVERUNDER_TEXTURES[4]
+  src
 }){
   //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
 
@@ -77,7 +70,7 @@ export default function StereoPano({
     setMeshL(meshL);
     setMeshR(meshR);
 
-  }, [])
+  }, [texture])
 
   if(!meshL){
     return null;
