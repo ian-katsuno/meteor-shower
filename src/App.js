@@ -70,8 +70,9 @@ function App() {
           {/* <Chair 
             position={[0, 0, 2]}
           /> */}
+
+          <ViewMaster />
         </React.Suspense>
-        <ViewMaster />
         <VrGamePad />
         <Effects />
         <VRButton />
