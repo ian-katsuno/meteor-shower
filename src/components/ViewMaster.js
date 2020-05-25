@@ -10,11 +10,11 @@ const OVERUNDER_TEXTURES = [
   // '/textures/overunder/ACM_3603D_4096x4096_01.jpg', //galazy spaceship 1
   // '/textures/overunder/ACM_3603D_4096x4096_02.jpg', //bacteria 
   // '/textures/overunder/ACM_3603D_4096x4096_03.jpg', // galaxy spaceship 2
-  '/textures/overunder/ACM_3603D_4096x4096_04.jpg', // trippy arms and legs
+//  '/textures/overunder/ACM_3603D_4096x4096_04.jpg', // trippy arms and legs
 ]
 
 const STARTING_INDEX = 0,
-  TIME_BETWEEN_SCENE_CHANGES = 12000;
+  TIME_BETWEEN_SCENE_CHANGES = 14000;
 
 export default function ViewMaster({
 
