@@ -1,11 +1,12 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 //import { useSpring } from '@react-spring/core';
-import { a, useSpring } from '@react-spring/three';
+// import { a, useSpring } from '@react-spring/three';
 
 import { 
   useThree,
   useLoader,
-  extend
+  extend,
+  useFrame
 } from 'react-three-fiber';
 
 import {
@@ -30,6 +31,8 @@ const OVERUNDER_TEXTURES = [
   '/textures/starry_background.jpg'
 ]
 
+const OPACITY_STEP = 0.04;
+
 function mapSphereGeometryToOverUnder(sphereGeometry, half="top"){
   const uvs = sphereGeometry.faceVertexUvs[0];
   for (var i = 0; i < uvs.length; i++) {
@@ -48,12 +51,15 @@ export default function StereoPano({
 }){
   //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
 
-  const { spring } = useSpring({
-    spring: opacity,
-    config: { mass: 1, tension: 170, friction: 90, precision: 0.0001 }
-  })
+  // const { spring } = useSpring({
+  //   spring: opacity,
+  //   config: { mass: 1, tension: 170, friction: 90, precision: 0.0001 }
+  // })
 
-  const opacityValue = spring.to([0, 1], [0, 1]);
+  // const opacityValue = spring.to([0, 1], [0, 1]);
+  const opacityRef = useRef(opacity);
+  const materialRef1 = useRef();
+  const materialRef2 = useRef();
 
   const [geometryL, geometryR] = useMemo(() => {
     const geometryL = new SphereGeometry(500, 60, 40);
@@ -63,7 +69,7 @@ export default function StereoPano({
     return [ geometryL, geometryR ];
   }, []);
 
-const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
+  const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
 
   const [meshL, setMeshL] = useState();
   const [meshR, setMeshR] = useState();
@@ -74,7 +80,27 @@ const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
   //   set({opacity});
   // }, [opacity]);
 
-  const { camera, gl, useFrame } = useThree();
+  const { camera, gl } = useThree();
+
+  useFrame(() => {
+    if(!materialRef1.current){
+      return;
+    }
+    if(opacity === 0 && opacityRef.current === 1){
+      debugger;
+    }
+    if(Math.abs(opacity - opacityRef.current) > OPACITY_STEP){
+      opacityRef.current += (OPACITY_STEP * Math.sign(opacity - opacityRef.current));
+    }
+    else{
+      console.log('snapped, opacity = ', opacity, ' opacityRef.current =', opacityRef.current);
+      opacityRef.current = opacity;
+    }
+
+    materialRef1.current.opacity = opacityRef.current;
+    materialRef2.current.opacity = opacityRef.current;
+
+  }, 1);
 
   useEffect(() => {
     // enabling layer 1 so that the camera can see one pano sphere before you 'Enter VR'
@@ -118,15 +144,15 @@ const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
     return null;
   }
   return (
-    <a.group>
-      <a.mesh layers={1}>
-        <a.meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={opacityValue} />
+    <group>
+      <mesh layers={1}>
+        <meshStandardMaterial ref={materialRef1} attach="material" map={texture} side={DoubleSide} transparent={true} />
         <primitive attach="geometry" object={geometryL} />
-      </a.mesh>
-      <a.mesh layers={2}>
-        <a.meshStandardMaterial attach="material" map={texture} side={DoubleSide} transparent={true} opacity={opacityValue} />
+      </mesh>
+      <mesh layers={2}>
+        <meshStandardMaterial ref={materialRef2} attach="material" map={texture} side={DoubleSide} transparent={true} />
         <primitive attach="geometry" object={geometryR} />
-      </a.mesh>
-    </a.group>
+      </mesh>
+    </group>
   );
 }

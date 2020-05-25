@@ -37,7 +37,7 @@ export default function ViewMaster({
 
         setTimeout(() => {
           setVisible(true);
-        }, 1000)
+        }, 1300)
       }, 1000)
     }, TIME_BETWEEN_SCENE_CHANGES);
 

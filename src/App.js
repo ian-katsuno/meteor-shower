@@ -36,7 +36,7 @@ function App() {
     <>
       <h1 style={{color: 'white', position: 'fixed'}}>SPACESCAPE</h1>
       <Canvas invalidateFrameloop vr={true}>
-        <React.Suspense fallback={<Dom></Dom>}>
+        <React.Suspense fallback={null}>
           {/* <Triangle 
             position={new Vector3(0, 0, -5)}
             scale={new Vector3(4, 4, 4)}
