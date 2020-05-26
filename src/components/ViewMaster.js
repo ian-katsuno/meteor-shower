@@ -32,10 +32,11 @@ const OVERUNDER_TEXTURES = [
 ]
 
 const SCENES = [
-  { texture: '/textures/overunder/condo_01.jpg', audio: '/audio/1.mp3', rotation: Math.PI*2},
-  { texture: '/textures/overunder/condo_02.jpg', audio: '/audio/1.mp3', rotation: 0},
-  { texture: '/textures/overunder/condo_03.jpg', audio: '/audio/1.mp3', rotation: 0},
-  { texture: '/textures/overunder/chess-pano-4k-stereo.jpg', audio: '/audio/1.mp3', rotation: 0},
+  { texture: '/textures/overunder/condo_01.jpg', audio: '/audio/condo_01.mp3', rotation: Math.PI*2},
+  { texture: '/textures/overunder/condo_02.jpg', audio: '/audio/condo_02.mp3', rotation: 0},
+  { texture: '/textures/overunder/condo_03.jpg', audio: '/audio/condo_03.mp3', rotation: 0},
+  { texture: '/textures/overunder/condo_04.jpg', audio: '/audio/condo_04.mp3', rotation: 0},
+  { texture: '/textures/overunder/condo_05.jpg', audio: '/audio/condo_05.mp3', rotation: 0},
 ]
 
 const STARTING_INDEX = 0,
@@ -63,7 +64,7 @@ export default function ViewMaster({
     pause();
     setTimeout(() => {
       // after it fades down change the src and fade it back up
-      panoRef.current = (panoRef.current + 1) % OVERUNDER_TEXTURES.length;
+      panoRef.current = (panoRef.current + 1) % SCENES.length;
       setPano(SCENES[panoRef.current].texture);
       setSrc(SCENES[panoRef.current].audio);
       setRotation(SCENES[panoRef.current].rotation);
@@ -71,7 +72,7 @@ export default function ViewMaster({
       setTimeout(() => {
         play();
         setVisible(true);
-      }, 1300)
+      }, 1400)
     }, 1000)   
   }, [panoRef, play, pause, setPano, setSrc, setVisible]);
 
