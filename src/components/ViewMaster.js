@@ -22,7 +22,7 @@ function createOverlay(extraClasses, onClick){
 }
 
 const OVERUNDER_TEXTURES = [
-  '/textures/overunder/CondoTest0370.jpg',
+  '/textures/overunder/condo01.jpg',
   '/textures/overunder/Panorama1_8k_Test.jpg',
   '/textures/overunder/chess-pano-4k-stereo.jpg',
 //   '/textures/overunder/ACM_3603D_4096x4096_01.jpg', //galazy spaceship 1
@@ -32,10 +32,10 @@ const OVERUNDER_TEXTURES = [
 ]
 
 const SCENES = [
-  { texture: '/textures/overunder/CondoTest0370.jpg', audio: '/audio/1.mp3'},
-  { texture: '/textures/overunder/UE_8k_80q.jpg', audio: '/audio/1.mp3'},
-  { texture: '/textures/overunder/Panorama1_8k_Test.jpg', audio: '/audio/1.mp3'},
-  { texture: '/textures/overunder/chess-pano-4k-stereo.jpg', audio: '/audio/1.mp3'},
+  { texture: '/textures/overunder/condo_01.jpg', audio: '/audio/1.mp3', rotation: Math.PI*2},
+  { texture: '/textures/overunder/condo_02.jpg', audio: '/audio/1.mp3', rotation: 0},
+  { texture: '/textures/overunder/condo_03.jpg', audio: '/audio/1.mp3', rotation: 0},
+  { texture: '/textures/overunder/chess-pano-4k-stereo.jpg', audio: '/audio/1.mp3', rotation: 0},
 ]
 
 const STARTING_INDEX = 0,
@@ -45,6 +45,7 @@ export default function ViewMaster({
 
 }){
   const [ pano, setPano ] = useState(SCENES[STARTING_INDEX].texture)
+  const [ rotation, setRotation ] = useState(SCENES[STARTING_INDEX].rotation)
   const panoRef = useRef(STARTING_INDEX);
   const [ visible, setVisible ] = useState(false);
   const overlayRef = useRef([]);
@@ -65,6 +66,7 @@ export default function ViewMaster({
       panoRef.current = (panoRef.current + 1) % OVERUNDER_TEXTURES.length;
       setPano(SCENES[panoRef.current].texture);
       setSrc(SCENES[panoRef.current].audio);
+      setRotation(SCENES[panoRef.current].rotation);
 
       setTimeout(() => {
         play();
@@ -101,6 +103,7 @@ export default function ViewMaster({
     <StereoPano 
       src={pano}
       opacity={Number(visible)}
+      rotation={rotation}
     />
   )
 }

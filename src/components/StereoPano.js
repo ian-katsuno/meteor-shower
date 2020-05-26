@@ -47,7 +47,8 @@ function mapSphereGeometryToOverUnder(sphereGeometry, half="top"){
 
 export default function StereoPano({
   src,
-  opacity = 0.5
+  opacity = 0.5,
+  rotation = 0
 }){
   //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
 
@@ -86,14 +87,11 @@ export default function StereoPano({
     if(!materialRef1.current){
       return;
     }
-    if(opacity === 0 && opacityRef.current === 1){
-      debugger;
-    }
+
     if(Math.abs(opacity - opacityRef.current) > OPACITY_STEP){
       opacityRef.current += (OPACITY_STEP * Math.sign(opacity - opacityRef.current));
     }
     else{
-      console.log('snapped, opacity = ', opacity, ' opacityRef.current =', opacityRef.current);
       opacityRef.current = opacity;
     }
 
@@ -145,11 +143,11 @@ export default function StereoPano({
   }
   return (
     <group>
-      <mesh layers={1}>
+      <mesh layers={1} rotation-y={rotation}>
         <meshStandardMaterial ref={materialRef1} attach="material" map={texture} side={DoubleSide} transparent={true} />
         <primitive attach="geometry" object={geometryL} />
       </mesh>
-      <mesh layers={2}>
+      <mesh layers={2} rotation-y={rotation}>
         <meshStandardMaterial ref={materialRef2} attach="material" map={texture} side={DoubleSide} transparent={true} />
         <primitive attach="geometry" object={geometryR} />
       </mesh>
