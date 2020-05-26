@@ -3,6 +3,24 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import StereoPano from './StereoPano';
 import useMedia from '../lib/useMedia';
 
+function createOverlay(extraClasses, onClick){
+  const overlay = document.createElement('div');
+  overlay.classList.add('start-overlay');
+  
+  const redButton = document.createElement('button')
+  redButton.onclick = onClick;
+  redButton.classList.add('red')
+  redButton.innerHTML = 'START';
+  overlay.appendChild(redButton);
+
+  const cyanButton = document.createElement('button')
+  cyanButton.onclick = onClick;
+  cyanButton.classList.add('cyan')
+  cyanButton.innerHTML = 'START';
+  overlay.appendChild(cyanButton);
+  return overlay
+}
+
 const OVERUNDER_TEXTURES = [
   '/textures/overunder/CondoTest0370.jpg',
   '/textures/overunder/Panorama1_8k_Test.jpg',
@@ -29,6 +47,7 @@ export default function ViewMaster({
   const [ pano, setPano ] = useState(SCENES[STARTING_INDEX].texture)
   const panoRef = useRef(STARTING_INDEX);
   const [ visible, setVisible ] = useState(false);
+  const overlayRef = useRef([]);
 
   const {
     play,
@@ -54,17 +73,28 @@ export default function ViewMaster({
     }, 1000)   
   }, [panoRef, play, pause, setPano, setSrc, setVisible]);
 
+  const start = useCallback(() => {
+      while(overlayRef.current.length > 0){
+        const toRemove = overlayRef.current.splice(0, 1);
+        toRemove[0].remove();
+      }
+      setOnFinish(nextScene)
+      setSrc(SCENES[STARTING_INDEX].audio);
+      setTimeout(() => {
+        play();
+        setVisible(true);
+      }, 1000);
+  }, [setOnFinish, nextScene, setSrc, play, setVisible])
+
   useEffect(() => {
     setOnFinish(nextScene)
   }, [nextScene, setOnFinish])
 
+
   useEffect(() => {
-    setTimeout(() => {
-      setOnFinish(nextScene)
-      setSrc(SCENES[STARTING_INDEX].audio);
-      play();
-      setVisible(true);
-    }, 2000)
+    const redOverlay = createOverlay(['red'], start);
+    overlayRef.current.push(redOverlay);
+    document.body.appendChild(redOverlay);
   }, []);
 
   return (
