@@ -86,7 +86,7 @@ export default function ViewMaster({
       setTimeout(() => {
         play();
         setVisible(true);
-      }, 1000);
+      }, 10000);
   }, [setOnFinish, nextScene, setSrc, play, setVisible])
 
   useEffect(() => {
@@ -101,10 +101,18 @@ export default function ViewMaster({
   }, []);
 
   return (
-    <StereoPano 
-      src={pano}
-      opacity={Number(visible)}
-      rotation={rotation}
-    />
+    <>
+      <StereoPano 
+        src={pano}
+        opacity={Number(visible)}
+        rotation={rotation}
+      />
+      {/* <StereoPano 
+        src={'/textures/overunder/CondoVR-3.jpg'}
+        opacity={1}
+        rotation={0}
+        radius={510}
+      /> */}
+    </>
   )
 }

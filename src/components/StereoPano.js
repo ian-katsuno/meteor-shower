@@ -48,7 +48,8 @@ function mapSphereGeometryToOverUnder(sphereGeometry, half="top"){
 export default function StereoPano({
   src,
   opacity = 0.5,
-  rotation = 0
+  rotation = 0,
+  radius = 500
 }){
   //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
 
@@ -63,8 +64,8 @@ export default function StereoPano({
   const materialRef2 = useRef();
 
   const [geometryL, geometryR] = useMemo(() => {
-    const geometryL = new SphereGeometry(500, 60, 40);
-    const geometryR = new SphereGeometry(500, 60, 40);
+    const geometryL = new SphereGeometry(radius, 60, 40);
+    const geometryR = new SphereGeometry(radius, 60, 40);
     mapSphereGeometryToOverUnder(geometryL, "top"); 
     mapSphereGeometryToOverUnder(geometryR, "bottom");
     return [ geometryL, geometryR ];
