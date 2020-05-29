@@ -9,20 +9,21 @@ import {
   generateStartButton,
   createOverlay,
   setProgressCounter,
+  computePercent,
  } from '../lib/CondoHelpers';
-
-const STARTING_INDEX = 0,
-  TIME_BETWEEN_SCENE_CHANGES = 14000;
 
 export default function ViewMaster({
 
 }){
-  const [ pano, setPano ] = useState(SCENES[STARTING_INDEX].texture)
-  const [ rotation, setRotation ] = useState(SCENES[STARTING_INDEX].rotation)
-  const panoRef = useRef(STARTING_INDEX);
+  const [ pano, setPano ] = useState(SCENES[0].texture)
+  const [ rotation, setRotation ] = useState(SCENES[0].rotation)
+  const panoRef = useRef(0);
   const [ visible, setVisible ] = useState(true);
   const overlayRef = useRef([]);
+  const startButtonRef = useRef();
   const textures = useRef([]);
+  const nAudioLoaded = useRef(0);
+  const nTexturesLoaded = useRef(0);
 
   const {
     play,
@@ -50,34 +51,59 @@ export default function ViewMaster({
   }, [panoRef, play, pause, setPano, setSrc, setVisible]);
 
   const start = useCallback(() => {
-    overlayRef.current.style.opacity = 0;
-    setTimeout(() =>{
-      if(overlayRef.current && typeof overlayRef.current.remove === 'function'){
-        overlayRef.current.remove();
-      }
+    startButtonRef.current.style.opacity = 0;
+    setTimeout(() => {
+      overlayRef.current.style.opacity = 0;
+      setTimeout(() =>{
+        if(overlayRef.current && typeof overlayRef.current.remove === 'function'){
+          overlayRef.current.remove();
+        }
 
-      setOnFinish(nextScene)
-      setSrc(SCENES[STARTING_INDEX].audio);
-      setTimeout(() => {
-        play();
-        setVisible(true);
-      }, 2000);
+        setOnFinish(nextScene)
+        setSrc(SCENES[0].audio);
+        setTimeout(() => {
+          play();
+          setVisible(true);
+        }, 2000);
+      }, 2500)
 
-    }, 2500)
+    }, 2000)
+
   }, [setOnFinish, nextScene, setSrc, play, setVisible])
 
   useEffect(() => {
     setOnFinish(nextScene)
   }, [nextScene, setOnFinish])
 
-
   useEffect(() => {
+
     const [overlay, loadingGif, progress] = createOverlay();
     overlayRef.current = overlay;
     document.body.appendChild(overlay);
-    loadingGif.style.opacity = 1;
+
     const manager = new LoadingManager();
     const loader = new TextureLoader(manager);
+
+    function checkExitLoading(percent){
+     if(percent === 100){
+      setTimeout(() => {
+        if(progress && progress.style){
+          progress.style.opacity = 0;
+        }
+        setTimeout(() => {
+          loadingGif.remove();
+          progress.remove();
+
+          const startButton = generateStartButton(start);
+          startButtonRef.current = startButton;
+          overlay.appendChild(startButton);
+          setTimeout(() =>{
+            startButton.style.opacity = 1;
+          }, 2000);
+        }, 2000)
+      }, 1500);
+     } 
+    }
 
     manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
       console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );    
@@ -85,26 +111,14 @@ export default function ViewMaster({
     
     manager.onLoad = function ( ) {
       console.log( 'Loading complete!');
-        setTimeout(() => {
-          if(progress && progress.style){
-            progress.style.opacity = 0;
-          }
-          setTimeout(() => {
-            loadingGif.remove();
-            progress.remove();
-
-            const startButton = generateStartButton(start);
-            overlay.appendChild(startButton);
-            setTimeout(() =>{
-              startButton.style.opacity = 1;
-            }, 2000);
-          }, 2000)
-        }, 1500);
+      const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current);
+      checkExitLoading(percent);
     };
     
     manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-      const percent = Math.round((itemsLoaded/itemsTotal)*100);
-      delay(450);
+      nTexturesLoaded.current += 1;
+      const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current);
+      delay(250);
       setProgressCounter(progress, percent);
       console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
     };
@@ -112,9 +126,23 @@ export default function ViewMaster({
     manager.onError = function ( url ) {
       console.log( 'There was an error loading ' + url );    
     };
-
+   
     for(const scene of SCENES){
+      // load the texture
       textures.current.push(loader.load(scene.texture));
+
+      // load the audio
+      const a = new Audio();
+      
+      a.addEventListener('canplaythrough', () => {
+        nAudioLoaded.current += 1;
+        const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current);
+        delay(250);
+        setProgressCounter(progress, percent); 
+        checkExitLoading(percent);
+      });
+
+      a.src = scene.audio;
     }
   }, [])
 

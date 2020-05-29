@@ -1,24 +1,24 @@
 import React, {useEffect } from 'react';
 import { Canvas, Dom } from 'react-three-fiber';
 
-import Meteors from './components/Meteors';
-import Plane from './components/Plane';
-import Sphere from './components/Sphere';
+// import Meteors from './components/Meteors';
+// import Plane from './components/Plane';
+// import Sphere from './components/Sphere';
 import Controls from './components/Controls';
 import Effects from './components/Effects';
 import VRButton from './components/VRButton';
 import './styles/styles.scss'
 import OrientationControls from './components/OrientationControls';
 import VrGamePad from './components/VrGamePad';
-import Triangle from './components/Triangle';
-import Avocado from './components/Avocado';
-import Chair from './components/Chair';
+// import Triangle from './components/Triangle';
+// import Avocado from './components/Avocado';
+// import Chair from './components/Chair';
 // import FlightHelmet from './components/FlightHelmet';
-import Menu from './components/Menu';
-import AnimatedTriangle from './components/AnimatedTriangle';
-import Fox from './components/Fox'
-import RockyPlanet from './components/RockyPlanet';
-import RingPlanet from './components/RingPlanet';
+// import Menu from './components/Menu';
+// import AnimatedTriangle from './components/AnimatedTriangle';
+// import Fox from './components/Fox'
+// import RockyPlanet from './components/RockyPlanet';
+// import RingPlanet from './components/RingPlanet';
 import StereoPano from './components/StereoPano';
 import ViewMaster from './components/ViewMaster';
 
