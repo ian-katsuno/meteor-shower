@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "gltfjsx": "^1.0.11",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.3",
+    "workerize-loader": "^1.2.1"
   }
 }

@@ -2,42 +2,14 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 import StereoPano from './StereoPano';
 import useMedia from '../lib/useMedia';
-
-function createOverlay(extraClasses, onClick){
-  const overlay = document.createElement('div');
-  overlay.classList.add('start-overlay');
-  
-  const redButton = document.createElement('button')
-  redButton.onclick = onClick;
-  redButton.classList.add('red')
-  redButton.innerHTML = 'START';
-  overlay.appendChild(redButton);
-
-  const cyanButton = document.createElement('button')
-  cyanButton.onclick = onClick;
-  cyanButton.classList.add('cyan')
-  cyanButton.innerHTML = 'START';
-  overlay.appendChild(cyanButton);
-  return overlay
-}
-
-const OVERUNDER_TEXTURES = [
-  '/textures/overunder/condo01.jpg',
-  '/textures/overunder/Panorama1_8k_Test.jpg',
-  '/textures/overunder/chess-pano-4k-stereo.jpg',
-//   '/textures/overunder/ACM_3603D_4096x4096_01.jpg', //galazy spaceship 1
-//   '/textures/overunder/ACM_3603D_4096x4096_02.jpg', //bacteria 
-//   '/textures/overunder/ACM_3603D_4096x4096_03.jpg', // galaxy spaceship 2
-//  '/textures/overunder/ACM_3603D_4096x4096_04.jpg', // trippy arms and legs
-]
-
-const SCENES = [
-  { texture: '/textures/overunder/condo_01.jpg', audio: '/audio/condo_01.mp3', rotation: Math.PI*2},
-  { texture: '/textures/overunder/condo_02.jpg', audio: '/audio/condo_02.mp3', rotation: 0},
-  { texture: '/textures/overunder/condo_03.jpg', audio: '/audio/condo_03.mp3', rotation: 0},
-  { texture: '/textures/overunder/condo_04.jpg', audio: '/audio/condo_04.mp3', rotation: 0},
-  { texture: '/textures/overunder/condo_05.jpg', audio: '/audio/condo_05.mp3', rotation: 0},
-]
+import { TextureLoader, LoadingManager } from 'three';
+import { 
+  SCENES,
+  delay,
+  generateStartButton,
+  createOverlay,
+  setProgressCounter,
+ } from '../lib/CondoHelpers';
 
 const STARTING_INDEX = 0,
   TIME_BETWEEN_SCENE_CHANGES = 14000;
@@ -48,8 +20,9 @@ export default function ViewMaster({
   const [ pano, setPano ] = useState(SCENES[STARTING_INDEX].texture)
   const [ rotation, setRotation ] = useState(SCENES[STARTING_INDEX].rotation)
   const panoRef = useRef(STARTING_INDEX);
-  const [ visible, setVisible ] = useState(false);
+  const [ visible, setVisible ] = useState(true);
   const overlayRef = useRef([]);
+  const textures = useRef([]);
 
   const {
     play,
@@ -77,16 +50,20 @@ export default function ViewMaster({
   }, [panoRef, play, pause, setPano, setSrc, setVisible]);
 
   const start = useCallback(() => {
-      while(overlayRef.current.length > 0){
-        const toRemove = overlayRef.current.splice(0, 1);
-        toRemove[0].remove();
+    overlayRef.current.style.opacity = 0;
+    setTimeout(() =>{
+      if(overlayRef.current && typeof overlayRef.current.remove === 'function'){
+        overlayRef.current.remove();
       }
+
       setOnFinish(nextScene)
       setSrc(SCENES[STARTING_INDEX].audio);
       setTimeout(() => {
         play();
         setVisible(true);
-      }, 10000);
+      }, 2000);
+
+    }, 2500)
   }, [setOnFinish, nextScene, setSrc, play, setVisible])
 
   useEffect(() => {
@@ -95,24 +72,65 @@ export default function ViewMaster({
 
 
   useEffect(() => {
-    const redOverlay = createOverlay(['red'], start);
-    overlayRef.current.push(redOverlay);
-    document.body.appendChild(redOverlay);
-  }, []);
+    const [overlay, loadingGif, progress] = createOverlay();
+    overlayRef.current = overlay;
+    document.body.appendChild(overlay);
+    loadingGif.style.opacity = 1;
+    const manager = new LoadingManager();
+    const loader = new TextureLoader(manager);
+
+    manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+      console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );    
+    };
+    
+    manager.onLoad = function ( ) {
+      console.log( 'Loading complete!');
+        setTimeout(() => {
+          if(progress && progress.style){
+            progress.style.opacity = 0;
+          }
+          setTimeout(() => {
+            loadingGif.remove();
+            progress.remove();
+
+            const startButton = generateStartButton(start);
+            overlay.appendChild(startButton);
+            setTimeout(() =>{
+              startButton.style.opacity = 1;
+            }, 2000);
+          }, 2000)
+        }, 1500);
+    };
+    
+    manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+      const percent = Math.round((itemsLoaded/itemsTotal)*100);
+      delay(450);
+      setProgressCounter(progress, percent);
+      console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+    };
+    
+    manager.onError = function ( url ) {
+      console.log( 'There was an error loading ' + url );    
+    };
+
+    for(const scene of SCENES){
+      textures.current.push(loader.load(scene.texture));
+    }
+  }, [])
 
   return (
     <>
+      <StereoPano 
+        src={'/textures/overunder/CondoVR-3.jpg'}
+        opacity={1}
+        rotation={0}
+        radius={510}
+      />
       <StereoPano 
         src={pano}
         opacity={Number(visible)}
         rotation={rotation}
       />
-      {/* <StereoPano 
-        src={'/textures/overunder/CondoVR-3.jpg'}
-        opacity={1}
-        rotation={0}
-        radius={510}
-      /> */}
     </>
   )
 }
