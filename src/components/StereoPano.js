@@ -50,6 +50,7 @@ export default function StereoPano({
   opacity = 0.5,
   rotation = 0,
   radius = 500,
+  play,
 //  texture
 //  texture
 }){
@@ -61,7 +62,7 @@ export default function StereoPano({
   // })
 
   // const opacityValue = spring.to([0, 1], [0, 1]);
-  const opacityRef = useRef(opacity);
+  const opacityRef = useRef(0.1);
   const materialRef1 = useRef();
   const materialRef2 = useRef();
 
@@ -91,15 +92,22 @@ export default function StereoPano({
       return;
     }
 
-    if(Math.abs(opacity - opacityRef.current) > OPACITY_STEP){
-      opacityRef.current += (OPACITY_STEP * Math.sign(opacity - opacityRef.current));
-    }
-    else{
-      opacityRef.current = opacity;
-    }
+    if((opacity !== opacityRef.current) && ((opacity == 0) || (texture))){
+      if(Math.abs(opacity - opacityRef.current) > OPACITY_STEP){
+        opacityRef.current += (OPACITY_STEP * Math.sign(opacity - opacityRef.current));
+      }
+      else{
+        opacityRef.current = opacity;
+      }
 
-    materialRef1.current.opacity = opacityRef.current;
-    materialRef2.current.opacity = opacityRef.current;
+      console.log(`opacityRef.current = ${opacityRef.current}, opacity = ${opacity}`)
+      if((typeof play === 'function') && (opacityRef.current === opacity) && (opacity === 1)){
+        console.log('calling playdd')
+        play();
+      }
+      materialRef1.current.opacity = opacityRef.current;
+      materialRef2.current.opacity = opacityRef.current;
+    }
 
   }, 1);
 

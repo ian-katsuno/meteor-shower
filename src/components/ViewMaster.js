@@ -19,7 +19,7 @@ export default function ViewMaster({
   
   const [ rotation, setRotation ] = useState(SCENES[0].rotation)
   const panoRef = useRef(0);
-  const [ visible, setVisible ] = useState(true);
+  const [ visible, setVisible ] = useState(false);
   const overlayRef = useRef([]);
   const startButtonRef = useRef();
   const textures = useRef([]);
@@ -45,12 +45,10 @@ export default function ViewMaster({
       panoRef.current = (panoRef.current + 1) % SCENES.length;
       setPano(SCENES[panoRef.current].texture);
       //setPano(textures.current[panoRef.current]);
-      //setSrc(SCENES[panoRef.current].audio);
       setRef(audioPlayers.current[panoRef.current]);
       setRotation(SCENES[panoRef.current].rotation);
 
       setTimeout(() => {
-        play();
         setVisible(true);
       }, 1400)
     }, 1000)   
@@ -71,7 +69,7 @@ export default function ViewMaster({
         //setSrc(SCENES[0].audio);
         setRef(audioPlayers.current[panoRef.current]);
         setTimeout(() => {
-          play();
+          //play();
           setVisible(true);
         }, 2000);
       }, 2500)
@@ -162,17 +160,18 @@ export default function ViewMaster({
 
   return (
     <>
-      {/* <StereoPano 
+      <StereoPano 
         src={'/textures/overunder/CondoVR-3.jpg'}
         opacity={1}
         rotation={0}
         radius={510}
-      /> */}
+      />
       <StereoPano 
         src={pano}
         texture={pano}
         opacity={Number(visible)}
         rotation={rotation}
+        play={play}
       />
     </>
   )
