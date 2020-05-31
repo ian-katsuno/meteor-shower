@@ -40,5 +40,9 @@ export default function useMedia(
     player.current.onended = _onFinish;
   }, [player])
 
-  return { play, pause, isPlaying, setSrc, setOnFinish }
+  const setRef = useCallback((elem) => {
+    player.current = elem;
+  });
+
+  return { play, pause, isPlaying, setSrc, setOnFinish, setRef }
 }

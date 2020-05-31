@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 import StereoPano from './StereoPano';
 import useMedia from '../lib/useMedia';
-import { TextureLoader, LoadingManager } from 'three';
+import { TextureLoader, DefaultLoadingManager } from 'three';
 import { 
   SCENES,
   delay,
@@ -15,7 +15,8 @@ import {
 export default function ViewMaster({
 
 }){
-  const [ pano, setPano ] = useState(SCENES[0].texture)
+  const [ pano, setPano ] = useState()
+  
   const [ rotation, setRotation ] = useState(SCENES[0].rotation)
   const panoRef = useRef(0);
   const [ visible, setVisible ] = useState(true);
@@ -24,12 +25,15 @@ export default function ViewMaster({
   const textures = useRef([]);
   const nAudioLoaded = useRef(0);
   const nTexturesLoaded = useRef(0);
+  const nTotalTextures = useRef();
+  const audioPlayers = useRef([]);
 
   const {
     play,
     pause,
     setSrc,
-    setOnFinish
+    setOnFinish,
+    setRef,
   } = useMedia()
 
   const nextScene = useCallback(() => {
@@ -40,7 +44,9 @@ export default function ViewMaster({
       // after it fades down change the src and fade it back up
       panoRef.current = (panoRef.current + 1) % SCENES.length;
       setPano(SCENES[panoRef.current].texture);
-      setSrc(SCENES[panoRef.current].audio);
+      //setPano(textures.current[panoRef.current]);
+      //setSrc(SCENES[panoRef.current].audio);
+      setRef(audioPlayers.current[panoRef.current]);
       setRotation(SCENES[panoRef.current].rotation);
 
       setTimeout(() => {
@@ -52,6 +58,7 @@ export default function ViewMaster({
 
   const start = useCallback(() => {
     startButtonRef.current.style.opacity = 0;
+    setPano(SCENES[panoRef.current].texture);
     setTimeout(() => {
       overlayRef.current.style.opacity = 0;
       setTimeout(() =>{
@@ -59,8 +66,10 @@ export default function ViewMaster({
           overlayRef.current.remove();
         }
 
+//        setPano(textures.current[0]);
         setOnFinish(nextScene)
-        setSrc(SCENES[0].audio);
+        //setSrc(SCENES[0].audio);
+        setRef(audioPlayers.current[panoRef.current]);
         setTimeout(() => {
           play();
           setVisible(true);
@@ -81,8 +90,8 @@ export default function ViewMaster({
     overlayRef.current = overlay;
     document.body.appendChild(overlay);
 
-    const manager = new LoadingManager();
-    const loader = new TextureLoader(manager);
+    const manager = DefaultLoadingManager;
+    const loader = new TextureLoader();
 
     function checkExitLoading(percent){
      if(percent === 100){
@@ -101,7 +110,7 @@ export default function ViewMaster({
             startButton.style.opacity = 1;
           }, 2000);
         }, 2000)
-      }, 1500);
+      }, 1000);
      } 
     }
 
@@ -111,13 +120,14 @@ export default function ViewMaster({
     
     manager.onLoad = function ( ) {
       console.log( 'Loading complete!');
-      const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current);
+      const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
       checkExitLoading(percent);
     };
     
     manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+      nTotalTextures.current = itemsTotal;
       nTexturesLoaded.current += 1;
-      const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current);
+      const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
       delay(250);
       setProgressCounter(progress, percent);
       console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
@@ -133,29 +143,34 @@ export default function ViewMaster({
 
       // load the audio
       const a = new Audio();
+      a.preload = 'auto';
       
       a.addEventListener('canplaythrough', () => {
         nAudioLoaded.current += 1;
-        const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current);
+        const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
         delay(250);
         setProgressCounter(progress, percent); 
         checkExitLoading(percent);
       });
 
       a.src = scene.audio;
+      a.load();
+      a.onended = nextScene;
+      audioPlayers.current.push(a);
     }
   }, [])
 
   return (
     <>
-      <StereoPano 
+      {/* <StereoPano 
         src={'/textures/overunder/CondoVR-3.jpg'}
         opacity={1}
         rotation={0}
         radius={510}
-      />
+      /> */}
       <StereoPano 
         src={pano}
+        texture={pano}
         opacity={Number(visible)}
         rotation={rotation}
       />

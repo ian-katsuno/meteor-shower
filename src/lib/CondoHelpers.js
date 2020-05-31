@@ -21,7 +21,7 @@ function createCounter(classes){
 
 function createProgressCounter(){
   const pc = document.createElement('div');
-  pc.style.transition = 'color 0.5s, opacity 2.5s';
+  pc.style.transition = 'color 0.5s, opacity 2.0s';
   const red = createCounter(['red']);
   const cyan = createCounter(['cyan']);
   pc.appendChild(red);
@@ -72,8 +72,8 @@ function generateStartButton(onClick){
   return div;
 }
 
-function computePercent(nAudio, nTextures){
-  return Math.round(((nAudio + nTextures) / (SCENES.length * 2))*100);
+function computePercent(nAudio, nTextures, total){
+  return Math.round(((nAudio + nTextures) / total)*100);
 }
 
 const SCENES = [

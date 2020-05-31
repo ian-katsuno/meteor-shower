@@ -49,7 +49,9 @@ export default function StereoPano({
   src,
   opacity = 0.5,
   rotation = 0,
-  radius = 500
+  radius = 500,
+//  texture
+//  texture
 }){
   //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
 
@@ -106,6 +108,12 @@ export default function StereoPano({
     camera.layers.enable(1);
     gl.setClearColor(0x000000);
   }, [])
+
+  useEffect(() => {
+    if(texture){
+      console.log('texture set');
+    }
+  }, [texture])
 
   // useEffect(() => {
   //   if(materialRef.current){
