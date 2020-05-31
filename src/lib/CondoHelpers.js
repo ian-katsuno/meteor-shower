@@ -30,6 +30,9 @@ function createProgressCounter(){
 }
 
 function setProgressCounter(pc, percent){
+  if(isNaN(percent)){
+    return;
+  }
   for(const child of pc.children){
     child.innerHTML = `${percent}%`;
   }

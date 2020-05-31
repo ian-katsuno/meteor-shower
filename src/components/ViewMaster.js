@@ -27,6 +27,7 @@ export default function ViewMaster({
   const nTexturesLoaded = useRef(0);
   const nTotalTextures = useRef();
   const audioPlayers = useRef([]);
+  const [ currentTexture, setCurrentTexture ] = useState(0);
 
   const {
     play,
@@ -47,7 +48,7 @@ export default function ViewMaster({
       //setPano(textures.current[panoRef.current]);
       setRef(audioPlayers.current[panoRef.current]);
       setRotation(SCENES[panoRef.current].rotation);
-
+      setCurrentTexture(panoRef.current);
       setTimeout(() => {
         setVisible(true);
       }, 1400)
@@ -168,7 +169,7 @@ export default function ViewMaster({
       />
       <StereoPano 
         src={pano}
-        texture={pano}
+        texture={textures.current[currentTexture]}
         opacity={Number(visible)}
         rotation={rotation}
         play={play}

@@ -51,10 +51,18 @@ export default function StereoPano({
   rotation = 0,
   radius = 500,
   play,
-//  texture
+  texture
 //  texture
 }){
-  //const texture = useLoader(TextureLoader, OVERUNDER_TEXTURES[0]);
+
+  const _texture = useMemo(() => {
+    if(texture){
+      return texture;
+    }
+    else if(src){
+      return new TextureLoader().load(src)
+    }
+  }, [src, texture])
 
   // const { spring } = useSpring({
   //   spring: opacity,
@@ -74,7 +82,7 @@ export default function StereoPano({
     return [ geometryL, geometryR ];
   }, []);
 
-  const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
+  //const texture = useMemo(() => src && new TextureLoader().load(src), [src]);
 
   const [meshL, setMeshL] = useState();
   const [meshR, setMeshR] = useState();
@@ -100,9 +108,9 @@ export default function StereoPano({
         opacityRef.current = opacity;
       }
 
-      console.log(`opacityRef.current = ${opacityRef.current}, opacity = ${opacity}`)
+//      console.log(`opacityRef.current = ${opacityRef.current}, opacity = ${opacity}`)
       if((typeof play === 'function') && (opacityRef.current === opacity) && (opacity === 1)){
-        console.log('calling playdd')
+ //       console.log('calling playdd')
         play();
       }
       materialRef1.current.opacity = opacityRef.current;
@@ -118,10 +126,10 @@ export default function StereoPano({
   }, [])
 
   useEffect(() => {
-    if(texture){
+    if(_texture){
       console.log('texture set');
     }
-  }, [texture])
+  }, [_texture])
 
   // useEffect(() => {
   //   if(materialRef.current){
@@ -155,17 +163,17 @@ export default function StereoPano({
 
   }, [src])
 
-  if(!texture){
+  if(!_texture){
     return null;
   }
   return (
     <group>
       <mesh layers={1} rotation-y={rotation}>
-        <meshStandardMaterial ref={materialRef1} attach="material" map={texture} side={DoubleSide} transparent={true} />
+        <meshStandardMaterial ref={materialRef1} attach="material" map={_texture} side={DoubleSide} transparent={true} />
         <primitive attach="geometry" object={geometryL} />
       </mesh>
       <mesh layers={2} rotation-y={rotation}>
-        <meshStandardMaterial ref={materialRef2} attach="material" map={texture} side={DoubleSide} transparent={true} />
+        <meshStandardMaterial ref={materialRef2} attach="material" map={_texture} side={DoubleSide} transparent={true} />
         <primitive attach="geometry" object={geometryR} />
       </mesh>
     </group>
