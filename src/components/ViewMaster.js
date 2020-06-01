@@ -57,9 +57,10 @@ export default function ViewMaster({
 
   const start = useCallback(() => {
     startButtonRef.current.style.opacity = 0;
-    setPano(SCENES[panoRef.current].texture);
     setTimeout(() => {
       overlayRef.current.style.opacity = 0;
+
+      setPano(SCENES[panoRef.current].texture);
       setTimeout(() =>{
         if(overlayRef.current && typeof overlayRef.current.remove === 'function'){
           overlayRef.current.remove();
@@ -73,9 +74,8 @@ export default function ViewMaster({
           //play();
           setVisible(true);
         }, 2000);
-      }, 2500)
-
-    }, 2000)
+      }, 2000)
+    }, 1500)
 
   }, [setOnFinish, nextScene, setSrc, play, setVisible])
 
@@ -107,9 +107,9 @@ export default function ViewMaster({
           overlay.appendChild(startButton);
           setTimeout(() =>{
             startButton.style.opacity = 1;
-          }, 2000);
-        }, 2000)
-      }, 1000);
+          }, 1000); // how long we wait with nothing before fading up the start button
+        }, 1000); // how long we give the progress to disappear 
+      }, 1000); // the time we leave the 100% up
      } 
     }
 

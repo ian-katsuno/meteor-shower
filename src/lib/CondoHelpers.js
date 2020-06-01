@@ -56,7 +56,7 @@ function createOverlay(){
 
 function generateStartButton(onClick){
   const div = document.createElement('div');
-  div.style.transition = 'opacity 2s';
+  div.style.transition = 'opacity 1.5s';
   div.style.opacity = 0;
   div.onclick = onClick;
 
@@ -82,7 +82,7 @@ function computePercent(nAudio, nTextures, total){
 const SCENES = [
   { texture: '/textures/overunder/condo_01.jpg', audio: '/audio/condo_01.mp3', rotation: Math.PI*2},
   { texture: '/textures/overunder/condo_02.jpg', audio: '/audio/condo_02.mp3', rotation: 0},
-  { texture: '/textures/overunder/condo_03.jpg', audio: '/audio/condo_03.mp3', rotation: 0},
+  { texture: '/textures/overunder/Condo_Kitchen_v3.jpg', audio: '/audio/condo_03.mp3', rotation: 0},
   { texture: '/textures/overunder/condo_04.jpg', audio: '/audio/condo_04.mp3', rotation: 0},
   { texture: '/textures/overunder/condo_05.jpg', audio: '/audio/condo_05.mp3', rotation: 0},
 ]

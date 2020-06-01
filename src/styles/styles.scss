@@ -26,6 +26,7 @@ body,
   background: black;
   z-index: 1000;
   transition: opacity 2.7s;
+  pointer-events: none;
 
 
   button, h1{
@@ -47,6 +48,7 @@ body,
     transition: color 1s, border-color 1s, transform 1s;
     padding: 2.0rem;
     cursor: pointer;
+    outline: none;
     
     &:hover{
      color: rgba(255, 255, 255, 1); 
