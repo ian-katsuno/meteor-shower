@@ -34,7 +34,6 @@ import {
 function App() {
   return (
     <>
-      <h1 style={{color: 'white', position: 'fixed'}}>SPACESCAPE</h1>
       <Canvas invalidateFrameloop vr={true}>
         <React.Suspense fallback={null}>
           {/* <Triangle 

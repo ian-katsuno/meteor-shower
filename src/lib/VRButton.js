@@ -101,12 +101,8 @@ var VRButton = {
             DeviceOrientationEvent.requestPermission()
             .then(response => {
               if (response == 'granted') {
-                const result = window.confirm('enter vr?');
-                if(result){
-                  var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
-                  navigator.xr.requestSession( 'immersive-vr', sessionInit ).then( onSessionStarted );
-
-                }
+                var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
+                navigator.xr.requestSession( 'immersive-vr', sessionInit ).then( onSessionStarted );
               }
               else{
                 alert("Permission Denied: immersive phone VR requires permission for DeviceOrientation events");
@@ -154,7 +150,7 @@ var VRButton = {
 		function stylizeElement( element ) {
 
 			element.style.position = 'absolute';
-			element.style.bottom = '20px';
+			element.style.bottom = '23px';
 			element.style.padding = '12px 6px';
 			element.style.border = '1px solid #fff';
 			element.style.borderRadius = '4px';

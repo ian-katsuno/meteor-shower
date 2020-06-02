@@ -10,6 +10,7 @@ import {
   createOverlay,
   setProgressCounter,
   computePercent,
+  requestMotionAccess,
  } from '../lib/CondoHelpers';
 
 export default function ViewMaster({
@@ -56,27 +57,36 @@ export default function ViewMaster({
   }, [panoRef, play, pause, setPano, setSrc, setVisible]);
 
   const start = useCallback(() => {
-    startButtonRef.current.style.opacity = 0;
-    setTimeout(() => {
-      overlayRef.current.style.opacity = 0;
+    requestMotionAccess()
+    .then((result) => {
+      if(!result){
+        alert('Access to device orientation is required for use of this app. Please click start again and accept the prompt. :)')
+        return 
+      }
+      startButtonRef.current.style.opacity = 0;
+      setTimeout(() => {
+        overlayRef.current.style.opacity = 0;
 
-      setPano(SCENES[panoRef.current].texture);
-      setTimeout(() =>{
-        if(overlayRef.current && typeof overlayRef.current.remove === 'function'){
-          overlayRef.current.remove();
-        }
+        setPano(SCENES[panoRef.current].texture);
+        setTimeout(() =>{
+          if(overlayRef.current && typeof overlayRef.current.remove === 'function'){
+            overlayRef.current.remove();
+          }
 
-//        setPano(textures.current[0]);
-        setOnFinish(nextScene)
-        //setSrc(SCENES[0].audio);
-        setRef(audioPlayers.current[panoRef.current]);
-        setTimeout(() => {
-          //play();
-          setVisible(true);
-        }, 2000);
-      }, 2000)
-    }, 1500)
-
+  //        setPano(textures.current[0]);
+          setOnFinish(nextScene)
+          //setSrc(SCENES[0].audio);
+          setRef(audioPlayers.current[panoRef.current]);
+          setTimeout(() => {
+            //play();
+            setVisible(true);
+          }, 2000);
+        }, 2000)
+      }, 1500)
+    })
+    .catch(err => {
+      alert('Access to device orientation is required for use of this app. Please click start again and accept the prompt. :)')
+    })
   }, [setOnFinish, nextScene, setSrc, play, setVisible])
 
   useEffect(() => {

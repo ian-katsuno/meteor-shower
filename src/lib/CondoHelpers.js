@@ -87,6 +87,32 @@ const SCENES = [
   { texture: '/textures/overunder/condo_05.jpg', audio: '/audio/condo_05.mp3', rotation: 0},
 ]
 
+function requestMotionAccess(cb){
+  return new Promise((res, resj) => {
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+      // iOS 13+
+      DeviceOrientationEvent.requestPermission()
+      .then(response => {
+        if (response == 'granted') {
+/*          if(result){
+            var sessionInit = { optionalFeatures: [ 'local-floor', 'bounded-floor' ] };
+            navigator.xr.requestSession( 'immersive-vr', sessionInit ).then( onSessionStarted );
+          }*/
+          return res(true);
+        }
+        else{
+          alert("Permission Denied: immersive phone VR requires permission for DeviceOrientation events");
+          return res(false);
+        }
+      })
+    } else {
+      // non iOS 13+
+      return res(true);
+    }
+  });
+}
+
+
 export {
   SCENES,
 
@@ -96,5 +122,6 @@ export {
   generateColor,
   generateStartButton,
   createOverlay,
-  setProgressCounter
+  setProgressCounter,
+  requestMotionAccess,
 }
