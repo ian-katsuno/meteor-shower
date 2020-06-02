@@ -145,7 +145,7 @@ export default function ViewMaster({
     
     manager.onLoad = function ( ) {
       console.log( 'Loading complete!');
-      const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
+      const percent = computePercent(SCENES.length, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
       checkExitLoading(percent);
     };
     
