@@ -152,7 +152,7 @@ export default function ViewMaster({
     manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
       nTotalTextures.current = itemsTotal;
       nTexturesLoaded.current += 1;
-      const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
+      const percent = computePercent(SCENES.length, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
       delay(250);
       setProgressCounter(progress, percent);
       console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
@@ -173,11 +173,12 @@ export default function ViewMaster({
       
       a.addEventListener('canplaythrough', () => {
         nAudioLoaded.current += 1;
-        const percent = computePercent(nAudioLoaded.current, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
+        const percent = computePercent(SCENES.length, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
         delay(250);
         setProgressCounter(progress, percent); 
         checkExitLoading(percent);
         a.src = '';
+        console.log('finished loaded audio', scene.audio);
       });
 
       a.src = scene.audio;
