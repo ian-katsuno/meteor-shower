@@ -40,7 +40,7 @@ body,
   }
 
   button{
-    font-size: 3.0rem;
+    font-size: 2.3rem;
     pointer-events: all;
     background: transparent;
     border: solid 3px rgba(255, 255, 255, 0.7);
@@ -93,5 +93,8 @@ body,
     }
   }
 
+  button.fullscreen{
+    font-size: 1.5rem;
+  }
 
 }

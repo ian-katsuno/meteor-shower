@@ -6,7 +6,7 @@ import { TextureLoader, DefaultLoadingManager } from 'three';
 import { 
   SCENES,
   delay,
-  generateStartButton,
+  generate3dButton,
   createOverlay,
   setProgressCounter,
   computePercent,
@@ -60,6 +60,10 @@ export default function ViewMaster({
   }, [panoRef, play, pause, setPano, setSrc, setVisible]);
 
   const start = useCallback(() => {
+
+    if (window.screenfull.isEnabled) {
+      window.screenfull.request();
+    }
 
     for(let i = 0; i < audioPlayers.current.length; i++){
       const a = new Audio();
@@ -124,7 +128,7 @@ export default function ViewMaster({
           loadingGif.remove();
           progress.remove();
 
-          const startButton = generateStartButton(start);
+          const startButton = generate3dButton('START', start);
           startButtonRef.current = startButton;
           overlay.appendChild(startButton);
           setTimeout(() =>{

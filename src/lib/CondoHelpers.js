@@ -51,10 +51,18 @@ function createOverlay(){
   const progressCounter = createProgressCounter();
   overlay.appendChild(progressCounter);
 
+  // const fullscreenButton = generate3dButton('Enter FULLSCREEN', () => {
+  //   if (window.screenfull.isEnabled) {
+  //     window.screenfull.request();
+  //   }
+  // }, ['fullscreen'])
+  // fullscreenButton.style.opacity = 1;
+  // overlay.appendChild(fullscreenButton);
+
   return [ overlay, loadingGif, progressCounter ];
 }
 
-function generateStartButton(onClick){
+function generate3dButton(text, onClick, classes = []){
   const div = document.createElement('div');
   div.style.transition = 'opacity 1.5s';
   div.style.opacity = 0;
@@ -63,12 +71,17 @@ function generateStartButton(onClick){
   const redButton = document.createElement('button')
   redButton.onclick = onClick;
   redButton.classList.add('red')
-  redButton.innerHTML = 'START';
+  redButton.innerHTML = text;
 
   const cyanButton = document.createElement('button')
   cyanButton.onclick = onClick;
   cyanButton.classList.add('cyan')
-  cyanButton.innerHTML = 'START';
+  cyanButton.innerHTML = text;
+
+  for(const c of classes){
+    redButton.classList.add(c);
+    cyanButton.classList.add(c);
+  }
 
   div.appendChild(redButton);
   div.appendChild(cyanButton);
@@ -120,7 +133,7 @@ export {
   computePercent,
 
   generateColor,
-  generateStartButton,
+  generate3dButton,
   createOverlay,
   setProgressCounter,
   requestMotionAccess,
