@@ -149,7 +149,7 @@ export default function VrGamePad({
  
  useFrame((time, frame) => {
   const session = gl.xr.getSession() ;
-  if(session){
+  if(session && session.inputSources[0]){
     const xrReferenceSpace = gl.xr.getReferenceSpace();
 
     // get the controller because we need to get the pose (position + orientation)

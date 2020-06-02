@@ -47,16 +47,27 @@ export default function ViewMaster({
       panoRef.current = (panoRef.current + 1) % SCENES.length;
       setPano(SCENES[panoRef.current].texture);
       //setPano(textures.current[panoRef.current]);
+
+      setOnFinish(nextScene)
       setRef(audioPlayers.current[panoRef.current]);
+      setSrc(SCENES[panoRef.current].audio);
       setRotation(SCENES[panoRef.current].rotation);
       setCurrentTexture(panoRef.current);
       setTimeout(() => {
         setVisible(true);
       }, 1400)
-    }, 1000)   
+    }, 500)   
   }, [panoRef, play, pause, setPano, setSrc, setVisible]);
 
   const start = useCallback(() => {
+
+    for(let i = 0; i < audioPlayers.current.length; i++){
+      const a = new Audio();
+      a.play();
+      a.onended = nextScene;
+      audioPlayers.current[i] = a;
+    }
+
     requestMotionAccess()
     .then((result) => {
       if(!result){
@@ -77,6 +88,7 @@ export default function ViewMaster({
           setOnFinish(nextScene)
           //setSrc(SCENES[0].audio);
           setRef(audioPlayers.current[panoRef.current]);
+          setSrc(SCENES[0].audio);
           setTimeout(() => {
             //play();
             setVisible(true);
@@ -87,7 +99,7 @@ export default function ViewMaster({
     .catch(err => {
       alert('Access to device orientation is required for use of this app. Please click start again and accept the prompt. :)')
     })
-  }, [setOnFinish, nextScene, setSrc, play, setVisible])
+  }, [setOnFinish, nextScene, setSrc, play, setVisible, audioPlayers])
 
   useEffect(() => {
     setOnFinish(nextScene)
@@ -152,6 +164,7 @@ export default function ViewMaster({
 
       // load the audio
       const a = new Audio();
+      a.volume = 0;
       a.preload = 'auto';
       
       a.addEventListener('canplaythrough', () => {
@@ -160,11 +173,13 @@ export default function ViewMaster({
         delay(250);
         setProgressCounter(progress, percent); 
         checkExitLoading(percent);
+        a.src = '';
       });
 
       a.src = scene.audio;
       a.load();
       a.onended = nextScene;
+      a.volume = 0;
       audioPlayers.current.push(a);
     }
   }, [])

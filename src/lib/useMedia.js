@@ -23,6 +23,9 @@ export default function useMedia(
 
   const play = useCallback(() => {
     setIsPlaying(true)
+    player.current.pause();
+    player.current.currentTime = 0;
+    player.current.volume = 1;
     return player.current
             .play()
             .catch(err => {
