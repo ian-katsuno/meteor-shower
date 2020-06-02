@@ -172,13 +172,13 @@ export default function ViewMaster({
       a.preload = 'auto';
       
       a.addEventListener('canplaythrough', () => {
-        nAudioLoaded.current += 1;
-        const percent = computePercent(SCENES.length, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
-        delay(250);
-        setProgressCounter(progress, percent); 
-        checkExitLoading(percent);
-        a.src = '';
-        console.log('finished loaded audio', scene.audio);
+        // nAudioLoaded.current += 1;
+        // const percent = computePercent(SCENES.length, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
+        // delay(250);
+        // setProgressCounter(progress, percent); 
+        // checkExitLoading(percent);
+        // a.src = '';
+        // console.log('finished loaded audio', scene.audio);
       });
 
       a.src = scene.audio;
