@@ -17,7 +17,6 @@ export default function ViewMaster({
 
 }){
   const [ pano, setPano ] = useState()
-  
   const [ rotation, setRotation ] = useState(SCENES[0].rotation)
   const panoRef = useRef(0);
   const [ visible, setVisible ] = useState(false);

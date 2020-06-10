@@ -93,10 +93,15 @@ function computePercent(nAudio, nTextures, total){
 }
 
 const SCENES = [
+  { texture: '/textures/overunder/v1/condo_01.jpg', audio: '/audio/condo_01.mp3', rotation: Math.PI*2},
   { texture: '/textures/overunder/v2/condo_01_v2.jpg', audio: '/audio/condo_01.mp3', rotation: Math.PI*2},
+  { texture: '/textures/overunder/v1/condo_02.jpg', audio: '/audio/condo_02.mp3', rotation: 0},
   { texture: '/textures/overunder/v2/condo_02_v2.jpg', audio: '/audio/condo_02.mp3', rotation: 0},
   { texture: '/textures/overunder/v2/condo_03_v2.jpg', audio: '/audio/condo_03.mp3', rotation: 0},
+  { texture: '/textures/overunder/v1/condo_03.jpg', audio: '/audio/condo_03.mp3', rotation: 0},
+  { texture: '/textures/overunder/v1/condo_04.jpg', audio: '/audio/condo_04.mp3', rotation: 0},
   { texture: '/textures/overunder/v2/condo_04_v2.jpg', audio: '/audio/condo_04.mp3', rotation: 0},
+  { texture: '/textures/overunder/v1/condo_05.jpg', audio: '/audio/condo_05.mp3', rotation: 0},
   { texture: '/textures/overunder/v2/condo_05_v2.jpg', audio: '/audio/condo_05.mp3', rotation: 0},
 ]
 
