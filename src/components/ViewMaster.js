@@ -191,7 +191,7 @@ export default function ViewMaster({
   return (
     <>
       <StereoPano 
-        src={'/textures/overunder/CondoVR-3.jpg'}
+        src={'/textures/overunder/v2/CondoVR-4.jpg'}
         opacity={1}
         rotation={0}
         radius={510}
