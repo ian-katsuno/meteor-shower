@@ -89,6 +89,7 @@ function generate3dButton(text, onClick, classes = []){
 }
 
 function computePercent(nAudio, nTextures, total){
+  console.log(`computePercent called width nAudio=${nAudio}, nTextures=${nTextures}, total=${total}`)
   return Math.round(((nAudio + nTextures) / total)*100);
 }
 

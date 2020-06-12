@@ -28,6 +28,7 @@ export default function ViewMaster({
   const nTotalTextures = useRef();
   const audioPlayers = useRef([]);
   const [ currentTexture, setCurrentTexture ] = useState(0);
+  const [ loading, setLoading ] = useState(true);
 
   useEffect(() => {
     
@@ -126,6 +127,9 @@ export default function ViewMaster({
 
     function checkExitLoading(percent){
      if(percent === 100){
+      setLoading(false);
+      manager.onLoad = null;
+      manager.onProgress = null;
       setTimeout(() => {
         if(progress && progress.style){
           progress.style.opacity = 0;
@@ -169,7 +173,8 @@ export default function ViewMaster({
     manager.onError = function ( url ) {
       console.log( 'There was an error loading ' + url );    
     };
-   
+  
+    loader.load('/textures/overunder/v2/CondoVR-4.jpg');
     for(const scene of SCENES){
       // load the texture
       textures.current.push(loader.load(scene.texture));
@@ -197,6 +202,9 @@ export default function ViewMaster({
     }
   }, [])
 
+  if(loading){
+    return null;
+  }
   return (
     <>
       <StereoPano 
