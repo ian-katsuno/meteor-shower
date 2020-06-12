@@ -29,6 +29,10 @@ export default function ViewMaster({
   const audioPlayers = useRef([]);
   const [ currentTexture, setCurrentTexture ] = useState(0);
 
+  useEffect(() => {
+    
+  }, [])
+
   const {
     play,
     pause,
@@ -58,6 +62,12 @@ export default function ViewMaster({
     }, 500)   
   }, [panoRef, play, pause, setPano, setSrc, setVisible]);
 
+  const startPlayback = useCallback(() => {
+    setTimeout(() => {
+      //play();
+      setVisible(true);
+    }, 4000);
+  },[])
   const start = useCallback(() => {
 
     if (window.screenfull.isEnabled) {
@@ -92,10 +102,7 @@ export default function ViewMaster({
           //setSrc(SCENES[0].audio);
           setRef(audioPlayers.current[panoRef.current]);
           setSrc(SCENES[0].audio);
-          setTimeout(() => {
-            //play();
-            setVisible(true);
-          }, 2000);
+          startPlayback();
         }, 2000)
       }, 1500)
     })
@@ -145,6 +152,7 @@ export default function ViewMaster({
     manager.onLoad = function ( ) {
       console.log( 'Loading complete!');
       const percent = computePercent(SCENES.length, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
+      console.log('percent computed was', percent);
       checkExitLoading(percent);
     };
     
@@ -152,6 +160,7 @@ export default function ViewMaster({
       nTotalTextures.current = itemsTotal;
       nTexturesLoaded.current += 1;
       const percent = computePercent(SCENES.length, nTexturesLoaded.current, nTotalTextures.current + SCENES.length);
+      console.log('percent computed', percent);
       delay(250);
       setProgressCounter(progress, percent);
       console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );

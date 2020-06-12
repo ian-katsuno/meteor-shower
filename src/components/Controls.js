@@ -44,7 +44,7 @@ function Controls() {
       maxDistance={100}
       minDistance={5}
       minPolarAngle={Math.PI / 6}
-      maxPolarAngle={Math.PI / 2}
+      maxPolarAngle={Math.PI}
     />
   );
 }
