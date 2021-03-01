@@ -12,7 +12,7 @@
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
     "react-three-fiber": "^4.2.7",
-    "three": "^0.116.1",
+    "three": "^0.125.0",
     "three-mesh-ui": "^1.2.2",
     "uuid": "^7.0.2",
     "webxr-polyfill": "^2.0.1"
